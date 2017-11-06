@@ -5,13 +5,25 @@
 % range [0,255]
 %
 % id: The identity number (integer) of the identified person,
-
-% i.e.?1?, ?2?,...,?16?for the persons belonging to ?db1? 
-% and ?0?for allother faces.
-
+% i.e.‘1’, ‘2’,...,‘16’ for the persons belonging to ‘db1’ 
+% and ‘0’ for allother faces.
 %
 % Your program code.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Get list of all JPG files in this directory
+% DIR returns as a structure array.  You will need to use () and . to get
+% the file names.
+db0_images = dir('\images\db0\*.jpg');      
+nfiles = length(db0_images);    % Number of files found
+for ii=1:nfiles
+   currentfilename = db0_images(ii).name;
+   currentimage = imread(currentfilename);
+   images{ii} = currentimage;
+   imshow(curren)
+end
+fprintf('--> Images in db0 have been loaded \n')
+
 
 
 disp('-----------------------------------------------');
