@@ -11,6 +11,20 @@
 % Your program code.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+% Get list of all JPG files in this directory
+% DIR returns as a structure array.  You will need to use () and . to get
+% the file names.
+db0_images = dir('\images\db0\*.jpg');      
+nfiles = length(db0_images);    % Number of files found
+for ii=1:nfiles
+   currentfilename = db0_images(ii).name;
+   currentimage = imread(currentfilename);
+   images{ii} = currentimage;
+   imshow(curren)
+end
+fprintf('--> Images in db0 have been loaded \n')
+
+
 
 disp('-----------------------------------------------');
 disp('  PART 1: Face detection ');
