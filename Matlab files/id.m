@@ -5,8 +5,10 @@
 % range [0,255]
 %
 % id: The identity number (integer) of the identified person,
-% i.e.‘1’, ‘2’,...,‘16’ for the persons belonging to ‘db1’ 
-% and ‘0’ for allother faces.
+
+% i.e.?1?, ?2?,...,?16?for the persons belonging to ?db1? 
+% and ?0?for allother faces.
+
 %
 % Your program code.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
