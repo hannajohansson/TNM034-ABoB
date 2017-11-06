@@ -13,55 +13,56 @@
 % Your program code.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+disp('--- Reading images.. ---');
+imageRead();
+
 
 disp('-----------------------------------------------');
 disp('  PART 1: Face detection ');
 disp('-----------------------------------------------');
-% PART 1: Face detection - Find face mask 
-    % 
-        
+% PART 1: Face detection 
+    %Find face mask  
 
 
+%disp('-----------------------------------------------');
+%disp('  PART 2: Face alignment ');
+%disp('-----------------------------------------------');
 
-disp('-----------------------------------------------');
-disp('  PART 2: Face alignment ');
-disp('-----------------------------------------------');
 % PART 2: Face alignment
+    % Find eyes using eye map 
+        % Chrominance
+        % Luminance 
+        % Combine them to one map 
+    % Mouthmap
 
-
-
-
-disp('-----------------------------------------------');
-disp('  PART 3: Appearence Normalization ');
-disp('-----------------------------------------------');
+%disp('-----------------------------------------------');
+%disp('  PART 3: Appearence Normalization ');
+%disp('-----------------------------------------------');
 % PART 3: Appearance Normalization
+    % Crop and normalize for 
+        % Scale +-10%
+        % Rotation +-5?
+        % Tone value +-30%
 
-
-
-
-disp('-----------------------------------------------');
-disp('  PART 4: Feature Description ');
-disp('-----------------------------------------------');
+        
+%disp('-----------------------------------------------');
+%disp('  PART 4: Feature Description ');
+%disp('-----------------------------------------------');
 % PART 4: Description
 
 
-
-
-disp('-----------------------------------------------');
-disp('  PART 5: Feature Extraction ');
-disp('-----------------------------------------------');
+%disp('-----------------------------------------------');
+%disp('  PART 5: Feature Extraction ');
+%disp('-----------------------------------------------');
 % PART 5: Feature Extraction
 
 
 
 
 
-disp('-----------------------------------------------');
-disp('  PART 6: Matching ');
-disp('-----------------------------------------------');
+%disp('-----------------------------------------------');
+%disp('  PART 6: Matching ');
+%disp('-----------------------------------------------');
+>>>>>>> 11fbc4500ca3e7058093d97edc09556f1b1a2553
 % PART 6: Matching
-
-
-
-
 

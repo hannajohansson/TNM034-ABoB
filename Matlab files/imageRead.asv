@@ -9,6 +9,4 @@ db0Images = cell(1, numfiles);
       imshow(db0Images{k})
     end
 
-%save cell of images
-save 'db0Images' db0Images;
 end
