@@ -8,3 +8,5 @@ for k = 1:numfiles
   db0Images{k} = importdata(myfilename);
   imshow(db0Images{k})
 end
+
+  
