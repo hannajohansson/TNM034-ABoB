@@ -27,13 +27,8 @@ imageRead();
 %disp('-----------------------------------------------');
 %disp('  PART 2: Face alignment ');
 %disp('-----------------------------------------------');
+faceAlignment();
 
-% PART 2: Face alignment
-    % Find eyes using eye map 
-        % Chrominance
-        % Luminance 
-        % Combine them to one map 
-    % Mouthmap
 
 %disp('-----------------------------------------------');
 %disp('  PART 3: Appearence Normalization ');
