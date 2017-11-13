@@ -10,11 +10,11 @@ function faceAlignment()
 load ('db0Images');
 load ('db1Images');
 
-image = db1Images{3};
+image = db1Images{4};
 % Eyedetection
 % ---- EyeMapC = 1/3 *(Cb^2 + (Cr inv))^2 + Cb/Cr)  ----
-iycbcr=rgb2ycbcr(image); %Convert to colorspace YCbCr
-iycbcr = im2double(iycbcr); % Normalize
+iycbcr=rgb2ycbcr(im2double(image)); %Convert to colorspace YCbCr
+%iycbcr = im2double(iycbcr); % Normalize
 %imshow(iycbcr);
 
 % Split into separate chanels
@@ -63,9 +63,7 @@ imshow(eyeMapL);
 title('EyeMapL');
 %}
 
-% Combine C and L  <--- FR?GA 
-
-% imgComb = rgb2gray(imfuse(eyeMapC, eyeMapL));
+% Combine C and L 
 
 imgMult = (eyeMapC .* eyeMapL); 
 %{
@@ -77,12 +75,7 @@ subplot(2,2,2);
 imshow(eyeMapL);
 title('EyeMapL');
 
-
 subplot(2,2,3);
-imshow(imgComb);
-title('imgComb');
-
-subplot(2,2,4);
 imshow(imgMult);
 title('imgMult');
 
@@ -92,27 +85,26 @@ title('imgMult');
 % MouthMap = Cr^2 * (Cr^2 - eta*Cr/Cb)^2
 % eta = 0,95 * 1/n * (sum of all elements in Cr^2 ) /(sum of all elements in Cr/Cb ) 
 
-iycbcr=rgb2ycbcr(histeq(image); %Convert to colorspace YCbCr
-iycbcr = im2double(iycbcr); % Normalize
-%imshow(iycbcr);
-
 % Split into separate chanels
-y= double(iycbcr(:,:,1)); 
-cb=double(iycbcr(:,:,2));
-cr=double(iycbcr(:,:,3));
+y =iycbcr(:,:,1); 
+cb=iycbcr(:,:,2);
+cr=iycbcr(:,:,3);
 
-% Create components for equation
-cr2=cr.^2;
+% Create components for equation, has to be normalized to the range 0->1
+%   When we work with doubles, the normalization = [0,1] <- now! 
+%   When we work with uint8, the normalization = [0,255]
+cr2=cr.^2 ;
+cr2Norm = ((cr2 -min(cr2(:)))./ ( max(cr2(:) - min(cr2(:))))); 
 crcb=cr./cb;
+crcbNorm = ((crcb -min(cbcr(:))) ./ ( max(crcb(:) - min(cbcr(:)))));
 
-etaNum = sum((cr(:).*255).^2); 
-etaDenum = sum((cr(:).*255) ./ (cb(:).*255)); 
- 
-eta = 0.95 * (1/numel(cr)) * (etaNum / etaDenum);
+% Calculate eta  
+etaNum = mean2(cr.^2);
+etaDenum = mean2(cr(:) ./ cb(:)); 
+eta = 0.95  * (etaNum / etaDenum)
 
-mouthMapC = cr2 .* (cr2 - (eta.*crcb)).^2; 
-
-
+% Calcul
+mouthMapC = cr2Norm .* (cr2Norm - (eta.*crcbNorm)).^2;
 
 subplot(1,2,1);
 imshow(image);
