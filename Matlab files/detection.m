@@ -3,7 +3,7 @@ function detection()
 
 % Step 1: Load image
 load ('db0Images');
-original_image = db0Images{1};
+original_image = im2double(db0Images{2});
 subplot(2, 6, 1), imshow(original_image), title("Original Image")
 
 % Step 2: Create YCbCr image
@@ -32,15 +32,27 @@ subplot(2, 6, 5), imshow(Cb_image), title("Blue Chroma Image")
 Cr_image = yCbCr_image(:,:,3);
 subplot(2, 6, 6), imshow(Cr_image), title("Red Chroma Image")
 
+level = graythresh(Cr_image);
+% Convert the image into a binary image using the threshold.
+mask_image = imbinarize(Cr_image, level);
+subplot(2, 6, 7), imshow(mask_image), title("Binary image (Mask)")
+
+level2 = graythresh(Cb_image);
+% Convert the image into a binary image using the threshold.
+mask_image = imbinarize(Cb_image, level2);
+subplot(2, 6, 8), imshow(mask_image), title("Binary image 2 (Mask)")
+
+%{
 % Step 6: Cb/Y, Cr/Y and Skin color samples in (Cb/Y) - (Cr/Y) subspace
-CbdivY_image = double(Cb_image./Y_image)
+CbdivY_image = (Cb_image./Y_image)
 %CbdivY_image = CbdivY_image/max(abs(CbdivY_image(:)))
 subplot(2, 6, 7), imshow(CbdivY_image), title("Cb/Y Image")
 
-CrdivY_image = double(Cr_image./Y_image);
+CrdivY_image = (Cr_image./Y_image);
 %CrdivY_image = CrdivY_image/max(abs(CrdivY_image(:)))
 subplot(2, 6, 8), imshow(CrdivY_image), title("Cr/Y Image")
 
 map_image = CbdivY_image - CrdivY_image;
 subplot(2, 6, 9), imshow(map_image), title("Map Image")
+%}
 end
