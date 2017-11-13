@@ -1,7 +1,6 @@
 function imageRead() 
 % Read all images from db0 and put them in cell 
 
-
 % db0
 numfiles0 = 4;
 db0Images = cell(1, numfiles0);

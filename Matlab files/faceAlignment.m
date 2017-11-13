@@ -10,7 +10,7 @@ function faceAlignment()
 load ('db0Images');
 load ('db1Images');
 
-image = db1Images{4};
+image = db1Images{2};
 iycbcr=rgb2ycbcr(im2double(image)); %Convert to colorspace YCbCr
 
 %                ----- Eyedetection -----
@@ -30,7 +30,7 @@ eyeMapC = (cb2 + crinv2 + cbcr) /3;
 
 % Calculate eyeMap 
 % EyeMapL = Y(x,y) * gsigma((x,y) / Y(x,y) ** gsigma((x,y) + 1 
-% * - dilation ** - erotion
+% * - dilation     ** - erotion
 imgGray = rgb2gray(image); % Change to graymap
 imgGrayHist = histeq(imgGray);
 
@@ -70,12 +70,36 @@ eta = 0.95  * (etaNum / etaDenum)
 % Calculate the mouthMap 
 mouthMapC = cr2Norm .* (cr2Norm - (eta.*crcbNorm)).^2;
 
-subplot(1,2,1);
-imshow(image);
-title('image');
+% dilation and erosion
+SED = strel('disk', 20, 8); % radius = 15, n(number of segments) = 8
+%SED = strel('rectangle', [3,10]);
+SEE = strel('disk', 16, 8); % radius = 15, n(number of segments) = 8
+%SEE = strel('rectangle', [3,10]); % radius = 15, n(number of segments) = 8
 
-subplot(1,2,2);
+
+mouthMapCDil = imdilate(im2uint8(mouthMapC), SED);
+%mouthMapCEr = imerode(im2uint8(mouthMapC), SE2);
+
+mouthMapDE = imerode(im2uint8(mouthMapCDil), SEE);
+
+% mouthMapCDil = imdilate(mouthMapC);
+
+
+subplot(2,2,1);
+imshow(mouthMapCDil);
+title('mouthMapCDil'); 
+
+subplot(2,2,2);
+imshow(mouthMapDE);
+title('mouthMapDE'); 
+
+subplot(2,2,3);
 imshow(mouthMapC);
 title('mouthMapC'); 
+
+subplot(2,2,4);
+imshow(image);
+title('image'); 
+
 
 end
