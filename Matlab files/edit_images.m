@@ -6,8 +6,8 @@ load ('db1Images');
 for k = 1:16
     
     original_image = im2double(db1Images{k});
-    figure;
-    subplot(1, 3, 1), imshow(original_image);
+    % figure;
+    % subplot(1, 3, 1), imshow(original_image);
 
     % Step 2: Convert to gray so we can get the mean luminance.
     gray_image = rgb2gray(original_image);
@@ -30,7 +30,7 @@ for k = 1:16
 
     % Step 6: Recombine separate color channels into a single, true color RGB image.
     edited_image = cat(3, red_channel, green_channel, blue_channel);
-    subplot(1, 3, 2), imshow(edited_image);
+    % subplot(1, 3, 2), imshow(edited_image);
     
     db1Images{k} = edited_image;
     
