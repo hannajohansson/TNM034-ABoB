@@ -21,7 +21,10 @@ imageRead();
 %disp('  PART 1: Face detection ');
 %disp('-----------------------------------------------');
 % PART 1: Face detection 
-    %Find face mask  
+    %Find face mask
+    
+disp('--- Detecting face.. ---');
+detection();
 
 
 %disp('-----------------------------------------------');
