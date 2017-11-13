@@ -11,11 +11,10 @@ load ('db0Images');
 load ('db1Images');
 
 image = db1Images{4};
-% Eyedetection
-% ---- EyeMapC = 1/3 *(Cb^2 + (Cr inv))^2 + Cb/Cr)  ----
-iycbcr=rgb2ycbcr(image); %Convert to colorspace YCbCr
-iycbcr = im2double(iycbcr); % Normalize
-%imshow(iycbcr);
+iycbcr=rgb2ycbcr(im2double(image)); %Convert to colorspace YCbCr
+
+%                ----- Eyedetection -----
+% EyeMapC = 1/3 *(Cb^2 + (Cr inv))^2 + Cb/Cr)  
 
 % Split into separate chanels
 y= double(iycbcr(:,:,1)); 
@@ -29,21 +28,11 @@ cbcr=cb./cr;
 
 eyeMapC = (cb2 + crinv2 + cbcr) /3; 
 
-
-%  ---- EyeMapL = Y(x,y) * gsigma((x,y) / Y(x,y) ** gsigma((x,y) + 1 ----
+% Calculate eyeMap 
+% EyeMapL = Y(x,y) * gsigma((x,y) / Y(x,y) ** gsigma((x,y) + 1 
 % * - dilation ** - erotion
 imgGray = rgb2gray(image); % Change to graymap
 imgGrayHist = histeq(imgGray);
-
-%{
-subplot(2,2,1);
-imshow(imgGray);
-title('imgGray');
-
-subplot(2,2,2);
-imshow(imgGrayHist);
-title('imgGrayHist');
-%}
 
 SE = strel('disk', 15, 8); % radius = 15, n(number of segments) = 8
 
@@ -53,59 +42,33 @@ denumerator = 1 + imerode(imgGrayHist, SE); % N?mnare
 
 eyeMapL = double(numerator ./ denumerator) / 255;
 
-%{
-subplot(2,2,3);
-imshow(eyeMapC);
-title('eyeMapC');
-
-subplot(2,2,4);
-imshow(eyeMapL);
-title('EyeMapL');
-%}
-
 % Combine C and L 
-
 imgMult = (eyeMapC .* eyeMapL); 
-%{
-subplot(2,2,1);
-imshow(eyeMapC);
-title('eyeMapC');
 
-subplot(2,2,2);
-imshow(eyeMapL);
-title('EyeMapL');
-
-subplot(2,2,3);
-imshow(imgMult);
-title('imgMult');
-
-%}
-
-% ---- Mouth detection ----
+%               ----- Mouth detection -----
 % MouthMap = Cr^2 * (Cr^2 - eta*Cr/Cb)^2
 % eta = 0,95 * 1/n * (sum of all elements in Cr^2 ) /(sum of all elements in Cr/Cb ) 
 
-iycbcr=rgb2ycbcr(image); %Convert to colorspace YCbCr
-%iycbcr = im2double(iycbcr) % Normalize
-%imshow(iycbcr);
-
 % Split into separate chanels
-y= double(iycbcr(:,:,1)); 
-cb=double(iycbcr(:,:,2));
-cr=double(iycbcr(:,:,3));
+y =histeq(iycbcr(:,:,1)); 
+cb=histeq(iycbcr(:,:,2));
+cr=(iycbcr(:,:,3));
 
-% Create components for equation, has to be normalized to the range 0->255
-cr2=cr.^2;
+% Create components for equation, has to be normalized to the range 0->1
+%   When we work with doubles, the normalization = [0,1] <- now! 
+%   When we work with uint8, the normalization = [0,255]
+cr2=cr.^2 ;
+cr2Norm = ((cr2 -min(cr2(:)))./ ( max(cr2(:) - min(cr2(:))))); 
 crcb=cr./cb;
+crcbNorm = ((crcb -min(cbcr(:))) ./ ( max(crcb(:) - min(cbcr(:)))));
 
-etaNum = sum(cr(:).^2); 
-etaDenum = sum(cr(:) ./ cb(:)); 
+% Calculate eta  
+etaNum = mean2(cr.^2);
+etaDenum = mean2(cr(:) ./ cb(:)); 
+eta = 0.95  * (etaNum / etaDenum)
 
-eta = 0.95 * (1/numel(cr)) * (etaNum / etaDenum);
-
-
-mouthMapC = cr2 .* (cr2 - (eta.*crcb)).^2; 
-
+% Calculate the mouthMap 
+mouthMapC = cr2Norm .* (cr2Norm - (eta.*crcbNorm)).^2;
 
 subplot(1,2,1);
 imshow(image);
