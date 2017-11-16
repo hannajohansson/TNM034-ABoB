@@ -1,8 +1,8 @@
 function faceDetection() 
 
     % Step 1: Load image
-    load ('db0Images');
-    originalImage = im2double(db0Images{3});
+    load ('db1Images');
+    originalImage = im2double(db1Images{12});
     % subplot(2, 6, 1), imshow(originalImage), title("Original Image")
 
     % Step 2: Create YCbCr image
@@ -22,7 +22,7 @@ function faceDetection()
     % Step 4: Convert crImage into a binary image using a threshold
     threshold = graythresh(crImage);
     imageMask = im2bw(crImage, threshold);
-    figure, subplot(1, 4, 1), imshow(imageMask), title("Binary image (Mask)")
+    % figure, subplot(1, 4, 1), imshow(imageMask), title("Binary image (Mask)")
 
     % Calculate the euler number 
     %(number of objects in the region minus the number of holes in those objects)
@@ -30,18 +30,18 @@ function faceDetection()
 
     % Step 5: Morphological operations
     morphMask = bwmorph(imageMask, 'open');
-    subplot(1, 4, 2), imshow(morphMask), title("Mask; open")
+    % subplot(1, 4, 2), imshow(morphMask), title("Mask; open")
 
     se = strel('sphere', 9);
     morphMask = imdilate(morphMask,se);
     %maskMorph = bwmorph(maskMorph, 'close', 1000);
-    subplot(1, 4, 3), imshow(morphMask), title("Mask; close")
+    % subplot(1, 4, 3), imshow(morphMask), title("Mask; close")
 
     % Step 6: Combine original image with the mask
     faceMask = originalImage .* morphMask;
-    subplot(1, 4, 4), imshow(faceMask), title("Face Mask")
+    % subplot(1, 4, 4), imshow(faceMask), title("Face Mask")
 
-    %{ Not necessary atm!
+    %{ 
     % Step 6: Cb/Y, Cr/Y and Skin color samples in (Cb/Y) - (Cr/Y) subspace
     cbdivyImage = (cbImage./yImage)
     %cbdivyImage = cbdivyImage/max(abs(cbdivyImage(:)))
