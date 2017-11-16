@@ -16,7 +16,7 @@
 disp('--- Reading images.. ---');
 imageRead();
 disp('--- Editing images.. ---');
-%edit_images();
+edit_images();
 
 
 %disp('-----------------------------------------------');

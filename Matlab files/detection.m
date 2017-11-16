@@ -3,8 +3,8 @@ function detection()
 
 % Step 1: Load image
 load ('db0Images');
-original_image = im2double(db0Images{2});
- % subplot(2, 6, 1), imshow(original_image), title("Original Image")
+original_image = im2double(db0Images{1});
+% subplot(2, 6, 1), imshow(original_image), title("Original Image")
 
 % Step 2: Create YCbCr image
 % Converts the truecolor image RGB to the equivalent 
@@ -19,7 +19,7 @@ hsv_image = rgb2hsv(original_image);
 
 % Step X: Create HSV-saturation image
 % 1: hue, 2: saturation, 3: value
-%new_image = hsv_image(:,:,2);
+% new_image = hsv_image(:,:,2);
 % subplot(1, 6, 4), imshow(new_image), title("Saturation Channel")
 
 % Step 4: Create Luminance Image, Blue Chroma Image and Red Croma Image
@@ -34,25 +34,48 @@ Cr_image = yCbCr_image(:,:,3);
 
 level = graythresh(Cr_image);
 % Convert the image into a binary image using the threshold.
-mask_image = im2bw(Cr_image, level); % imbinarize
-% subplot(2, 6, 7), imshow(mask_image), title("Binary image (Mask)")
+mask_image = im2bw(Cr_image, level);
+%subplot(2, 6, 7), 
+% imshow(mask_image), title("Binary image (Mask)")
 
-level2 = graythresh(Cb_image);
+bweuler(mask_image);
+
+% apply the blueness calculation
+% blueness = Cr_image - max(Y_image, Cb_image);
+
+% mask_image(blueness);              % visualize RGB planes
+% colorbar on                     % display colorbar
+
+% apply thresholding to segment the foreground
+
+% mask = blueness < 45;
+% mask_image = mask_image(mask)
+
+%figure
+%imshow(mask_image)
+
+% http://matlabtricks.com/post-35/a-simple-image-segmentation-example-in-matlab
+
+
+
+
+mask_morph = bwmorph(mask_image, 'dilate');
+%subplot(2, 6, 8), imshow(mask_morph)
+
+% level2 = graythresh(Cb_image);
 % Convert the image into a binary image using the threshold.
-mask_image = im2bw(Cb_image, level2); % imbinarize
+% mask_image = im2bw(Cb_image, level2);
 % subplot(2, 6, 8), imshow(mask_image), title("Binary image 2 (Mask)")
 
 %{
 % Step 6: Cb/Y, Cr/Y and Skin color samples in (Cb/Y) - (Cr/Y) subspace
 CbdivY_image = (Cb_image./Y_image)
 %CbdivY_image = CbdivY_image/max(abs(CbdivY_image(:)))
-% subplot(2, 6, 7), imshow(CbdivY_image), title("Cb/Y Image")
-
+subplot(2, 6, 7), imshow(CbdivY_image), title("Cb/Y Image")
 CrdivY_image = (Cr_image./Y_image);
 %CrdivY_image = CrdivY_image/max(abs(CrdivY_image(:)))
-% subplot(2, 6, 8), imshow(CrdivY_image), title("Cr/Y Image")
-
+subplot(2, 6, 8), imshow(CrdivY_image), title("Cr/Y Image")
 map_image = CbdivY_image - CrdivY_image;
-% subplot(2, 6, 9), imshow(map_image), title("Map Image")
+subplot(2, 6, 9), imshow(map_image), title("Map Image")
 %}
 end

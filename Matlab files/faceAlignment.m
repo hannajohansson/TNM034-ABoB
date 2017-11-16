@@ -10,9 +10,9 @@ function faceAlignment()
 load ('db0Images');
 load ('db1Images');
 
-image = db1Images{2};
+image = im2uint8(db1Images{2});
 iycbcr=rgb2ycbcr(im2double(image)); %Convert to colorspace YCbCr
-
+%iycbcrIm = double2im(iycbcr);
 % Koden funkar inte med edit_image 
 
 %                ----- Eyedetection -----
@@ -43,7 +43,7 @@ SE = strel('disk', 15, 8); % radius = 15, n(number of segments) = 8
 numerator =  imdilate(imgGrayHist, SE); % T?ljare
 denumerator = 1 + imerode(imgGrayHist, SE); % N?mnare
 
-eyeMapL = double(numerator ./ denumerator) / 255;
+eyeMapL = double(numerator ./ denumerator)/255;
 
 % Combine C and L 
 imgMult = (eyeMapC .* eyeMapL);
