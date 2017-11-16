@@ -10,8 +10,11 @@ function faceAlignment()
 load ('db0Images');
 load ('db1Images');
 
-image = im2uint8(db1Images{2});
-iycbcr=rgb2ycbcr(im2double(image)); %Convert to colorspace YCbCr
+image = db1Images{2};
+imageUint8 = im2uint8(image);
+iycbcrUint8=rgb2ycbcr(im2double(imageUint8)); %Convert to colorspace YCbCr
+
+iycbcr = rgb2ycbcr(image);
 %iycbcrIm = double2im(iycbcr);
 % Koden funkar inte med edit_image 
 
@@ -19,9 +22,9 @@ iycbcr=rgb2ycbcr(im2double(image)); %Convert to colorspace YCbCr
 % EyeMapC = 1/3 *(Cb^2 + (Cr inv))^2 + Cb/Cr)  
 
 % Split into separate chanels
-y= iycbcr(:,:,1);
-cb=iycbcr(:,:,2);
-cr=iycbcr(:,:,3);
+y= iycbcrUint8(:,:,1);
+cb=iycbcrUint8(:,:,2);
+cr=iycbcrUint8(:,:,3);
 
 % Create components for equation
 cb2=cb.^2;
@@ -34,7 +37,7 @@ eyeMapC = (cb2 + crinv2 + cbcr) /3;
 % EyeMapL = Y(x,y) * gsigma((x,y) / Y(x,y) ** gsigma((x,y) + 1 
 % * - dilation     ** - erotion
     %imgGray = rgb2gray(im2double(image)); % Change to graymap
-    imgGray = rgb2gray((image)); % Change to graymap
+    imgGray = rgb2gray((imageUint8)); % Change to graymap
 imgGrayHist = histeq(imgGray);
 
 SE = strel('disk', 15, 8); % radius = 15, n(number of segments) = 8
@@ -47,7 +50,7 @@ eyeMapL = double(numerator ./ denumerator)/255;
 
 % Combine C and L 
 imgMult = (eyeMapC .* eyeMapL);
-
+figure; 
 subplot(2,2,1);
 imshow(image);
 title('image'); 
@@ -104,7 +107,7 @@ mouthMapDE = imerode(im2uint8(mouthMapCDil), SEE);
 
 % mouthMapCDil = imdilate(mouthMapC);
 
-%{
+figure;
 subplot(2,2,1);
 imshow(mouthMapCDil);
 title('mouthMapCDil'); 
@@ -120,6 +123,6 @@ title('mouthMapC');
 subplot(2,2,4);
 imshow(image);
 title('image'); 
-%}
+
 
 end
