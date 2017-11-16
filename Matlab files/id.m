@@ -16,7 +16,7 @@
 disp('--- Reading images.. ---');
 imageRead();
 disp('--- Editing images.. ---');
-edit_images();
+editImages();
 
 
 %disp('-----------------------------------------------');
@@ -26,7 +26,7 @@ edit_images();
     %Find face mask
     
 disp('--- Detecting face.. ---');
-detection();
+faceDetection();
 
 
 %disp('-----------------------------------------------');
