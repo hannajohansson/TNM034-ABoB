@@ -30,6 +30,7 @@ function editImages()
 
         % Step 6: Recombine separate color channels into a single, true color RGB image.
         editedImage = cat(3, redChannel, greenChannel, blueChannel);
+        editedImage = min(editedImage, 1);
         % subplot(1, 3, 2), imshow(editedImage);
 
         db1Images{k} = editedImage;
