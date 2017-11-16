@@ -13,25 +13,28 @@ load ('db1Images');
 image = db1Images{2};
 iycbcr=rgb2ycbcr(im2double(image)); %Convert to colorspace YCbCr
 
+% Koden funkar inte med edit_image 
+
 %                ----- Eyedetection -----
 % EyeMapC = 1/3 *(Cb^2 + (Cr inv))^2 + Cb/Cr)  
 
 % Split into separate chanels
-y= double(iycbcr(:,:,1)); 
-cb=double(iycbcr(:,:,2));
-cr=double(iycbcr(:,:,3));
+y= iycbcr(:,:,1);
+cb=iycbcr(:,:,2);
+cr=iycbcr(:,:,3);
 
 % Create components for equation
 cb2=cb.^2;
 crinv2=(1-cr).^2;
 cbcr=cb./cr;
 
-eyeMapC = (cb2 + crinv2 + cbcr) /3; 
+eyeMapC = (cb2 + crinv2 + cbcr) /3;
 
 % Calculate eyeMap 
 % EyeMapL = Y(x,y) * gsigma((x,y) / Y(x,y) ** gsigma((x,y) + 1 
 % * - dilation     ** - erotion
-imgGray = rgb2gray(image); % Change to graymap
+    %imgGray = rgb2gray(im2double(image)); % Change to graymap
+    imgGray = rgb2gray((image)); % Change to graymap
 imgGrayHist = histeq(imgGray);
 
 SE = strel('disk', 15, 8); % radius = 15, n(number of segments) = 8
@@ -43,9 +46,26 @@ denumerator = 1 + imerode(imgGrayHist, SE); % N?mnare
 eyeMapL = double(numerator ./ denumerator) / 255;
 
 % Combine C and L 
-imgMult = (eyeMapC .* eyeMapL); 
+imgMult = (eyeMapC .* eyeMapL);
 
-%               ----- Mouth detection -----
+subplot(2,2,1);
+imshow(image);
+title('image'); 
+
+subplot(2,2,2);
+imshow(eyeMapC);
+title('eyeMapC'); 
+
+subplot(2,2,3);
+imshow(eyeMapL);
+title('eyeMapL'); 
+
+subplot(2,2,4);
+imshow(imgMult);
+title('imgMult'); 
+
+
+%               --------------- Mouth detection ---------------
 % MouthMap = Cr^2 * (Cr^2 - eta*Cr/Cb)^2
 % eta = 0,95 * 1/n * (sum of all elements in Cr^2 ) /(sum of all elements in Cr/Cb ) 
 
@@ -65,7 +85,7 @@ crcbNorm = ((crcb -min(cbcr(:))) ./ ( max(crcb(:) - min(cbcr(:)))));
 % Calculate eta  
 etaNum = mean2(cr.^2);
 etaDenum = mean2(cr(:) ./ cb(:)); 
-eta = 0.95  * (etaNum / etaDenum)
+eta = 0.95  * (etaNum / etaDenum);
 
 % Calculate the mouthMap 
 mouthMapC = cr2Norm .* (cr2Norm - (eta.*crcbNorm)).^2;
@@ -84,7 +104,7 @@ mouthMapDE = imerode(im2uint8(mouthMapCDil), SEE);
 
 % mouthMapCDil = imdilate(mouthMapC);
 
-
+%{
 subplot(2,2,1);
 imshow(mouthMapCDil);
 title('mouthMapCDil'); 
@@ -100,6 +120,6 @@ title('mouthMapC');
 subplot(2,2,4);
 imshow(image);
 title('image'); 
-
+%}
 
 end
