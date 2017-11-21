@@ -10,8 +10,8 @@ function faceAlignment()
 load ('db0Images');
 load ('db1Images');
 
-image = db1Images{2};
-%image = db0Images{1};
+image = db1Images{16};
+%image = db0Images{2};
 
 imageUint8 = im2uint8(image);
 iycbcrUint8=rgb2ycbcr(im2double(imageUint8)); %Convert to colorspace YCbCr
@@ -54,25 +54,38 @@ denumerator = 1 + imerode(imgGrayHist, SE); % N?mnare
 
 eyeMapL = double(numerator ./ denumerator)/255;
 
-% Combine C and L 
-imgMult = (eyeMapC .* eyeMapL);
-imgFuse = rgb2gray(imfuse(eyeMapC,eyeMapCBinary));
+%{
+% Multiply C and L 
+imgMult = (eyeMapCBinary .* eyeMapL);
+SDil = strel('disk', 10, 8); % radius = 10, n(number of segments) = 8
+imgMultDil =  imdilate(imgMult, SDil);
+%}
+
+% Fuse C and L
+imgFuse = rgb2gray(imfuse(eyeMapL,eyeMapCBinary));
+SDil = strel('disk', 10, 8); % radius = 10, n(number of segments) = 8
+imgFuseDil =  imdilate(imgFuse, SDil);
+
+%Make imgFuseDil binary
+imgFuseDilBin = im2bw(imgFuseDil, 0.7);    %use imbinarize instead of im2bw
+
+
 figure; 
 subplot(2,2,1);
 imshow(eyeMapCBinary);
 title('eyeMapCBinary'); 
 
-subplot(2,2,2);
-imshow(eyeMapC);
-title('eyeMapC'); 
-
 subplot(2,2,3);
-imshow(eyeMapL);
-title('eyeMapL'); 
+imshow(imgFuseDil);
+title('imgFuseDil'); 
 
 subplot(2,2,4);
-imshow(imgMult);
-title('imgMult'); 
+imshow(imgFuseDilBin);
+title('imgFuseDilBin'); 
+
+subplot(2,2,2);
+imshow(imgFuse);
+title('imgFuse'); 
 
 
 %               --------------- Mouth detection ---------------
