@@ -10,8 +10,8 @@ function faceAlignment()
 load ('db0Images');
 load ('db1Images');
 
-%image = db1Images{2};
-image = db0Images{1};
+image = db1Images{6};
+%image = db0Images{3};
 
 imageUint8 = im2uint8(image);
 iycbcrUint8=rgb2ycbcr(im2double(imageUint8)); %Convert to colorspace YCbCr
@@ -35,6 +35,10 @@ cbcr=cb./cr;
 
 eyeMapC = (cb2 + crinv2 + cbcr) /3;
 
+%Make eyeMapC binary
+level = graythresh(eyeMapC);
+eyeMapCBinary = im2bw(eyeMapC, level);    %use imbinarize instead of im2bw
+
 % Calculate eyeMap 
 % EyeMapL = Y(x,y) * gsigma((x,y) / Y(x,y) ** gsigma((x,y) + 1 
 % * - dilation     ** - erotion
@@ -51,15 +55,16 @@ denumerator = 1 + imerode(imgGrayHist, SE); % N?mnare
 eyeMapL = double(numerator ./ denumerator)/255;
 
 % Combine C and L 
-imgMult = (eyeMapC .* eyeMapL);
+imgMult = (eyeMapC .* eyeMapCBinary);
+imgFuse = rgb2gray(imfuse(eyeMapC,eyeMapCBinary));
 figure; 
 subplot(2,2,1);
-imshow(image);
-title('image'); 
+imshow(eyeMapCBinary);
+title('eyeMapCBinary'); 
 
 subplot(2,2,2);
-imshow(eyeMapC);
-title('eyeMapC'); 
+imshow(imgFuse);
+title('imgFuse'); 
 
 subplot(2,2,3);
 imshow(eyeMapL);
@@ -109,6 +114,7 @@ mouthMapDE = imerode(im2uint8(mouthMapCDil), SEE);
 
 % mouthMapCDil = imdilate(mouthMapC);
 
+%{
 figure;
 subplot(2,2,1);
 imshow(mouthMapCDil);
@@ -125,6 +131,7 @@ title('mouthMapC');
 subplot(2,2,4);
 imshow(image);
 title('image'); 
+%}
 
 
 end
