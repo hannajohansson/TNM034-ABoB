@@ -3,6 +3,10 @@ function faceDetection()
     % Step 1: Load image
     load ('db1Images');
     
+    % db1Faces
+    numfiles1 = 16;
+    db1Faces = cell(1, numfiles1);
+    
     for k = 1:16
         originalImage = im2double(db1Images{k});
         % subplot(1, 5, 1), imshow(originalImage), title('Original Image')
@@ -57,11 +61,11 @@ function faceDetection()
         subplot(2, 6, 9), imshow(mapImage), title("Map Image")
         %}
         
-        db1Images{k} = faceMask;
+        db1Faces{k} = faceMask;
          
     end
     
     %save cell of images
-    save 'db1Images' db1Images;  
+    save 'db1Faces' db1Faces;  
     
 end
