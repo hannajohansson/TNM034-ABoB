@@ -49,16 +49,19 @@ faceDetection();
 %disp('  PART 4: Feature Description ');
 %disp('-----------------------------------------------');
 % PART 4: Description
-
+    % Creating Eigenfaces
+    % Using PCA (Principle Component Analysis)???
 
 %disp('-----------------------------------------------');
 %disp('  PART 5: Feature Extraction ');
 %disp('-----------------------------------------------');
 % PART 5: Feature Extraction
-
+    % Plot feature description for all images in db  
 
 %disp('-----------------------------------------------');
 %disp('  PART 6: Matching ');
 %disp('-----------------------------------------------');
 % PART 6: Matching
+    % Compare an image with the db and find the closest match
+    % Decide if the closest match is close enough
 
