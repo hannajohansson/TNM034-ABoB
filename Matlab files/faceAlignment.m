@@ -9,8 +9,11 @@ function faceAlignment()
 
 load ('db0Images');
 load ('db1Images');
+load ('db1Faces');
 
-image = db1Images{16};
+currentFace = 5;
+image = db1Images{currentFace};
+faceMask = db1Faces{currentFace};
 %image = db0Images{2};
 
 imageUint8 = im2uint8(image);
@@ -66,8 +69,16 @@ imgFuse = rgb2gray(imfuse(eyeMapL,eyeMapCBinary));
 SDil = strel('disk', 10, 8); % radius = 10, n(number of segments) = 8
 imgFuseDil =  imdilate(imgFuse, SDil);
 
-%Make imgFuseDil binary
+% Make imgFuseDil binary
 imgFuseDilBin = im2bw(imgFuseDil, 0.7);    %use imbinarize instead of im2bw
+
+% Make faceMask binary
+faceMaskBin = im2bw(faceMask, 0.01);    %use imbinarize instead of im2bw
+SEr = strel('disk', 30, 8); % radius = 10, n(number of segments) = 8
+faceMaskEr = imerode(imdilate(faceMaskBin, SDil), SEr);
+
+% Add facemask to imgFuseDilBin
+finalEyeMap = (imgFuseDilBin .* faceMaskEr);
 
 
 figure; 
@@ -75,17 +86,17 @@ subplot(2,2,1);
 imshow(eyeMapCBinary);
 title('eyeMapCBinary'); 
 
+subplot(2,2,2);
+imshow(faceMaskEr);
+title('faceMaskEr'); 
+
 subplot(2,2,3);
-imshow(imgFuseDil);
-title('imgFuseDil'); 
+imshow(faceMaskBin);
+title('faceMaskBin'); 
 
 subplot(2,2,4);
-imshow(imgFuseDilBin);
-title('imgFuseDilBin'); 
-
-subplot(2,2,2);
-imshow(imgFuse);
-title('imgFuse'); 
+imshow(finalEyeMap);
+title('finalEyeMap'); 
 
 
 %               --------------- Mouth detection ---------------
