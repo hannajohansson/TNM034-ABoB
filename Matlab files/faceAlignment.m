@@ -10,8 +10,8 @@ function faceAlignment()
 load ('db0Images');
 load ('db1Images');
 
-image = db1Images{6};
-%image = db0Images{3};
+image = db1Images{2};
+%image = db0Images{1};
 
 imageUint8 = im2uint8(image);
 iycbcrUint8=rgb2ycbcr(im2double(imageUint8)); %Convert to colorspace YCbCr
@@ -36,7 +36,7 @@ cbcr=cb./cr;
 eyeMapC = (cb2 + crinv2 + cbcr) /3;
 
 %Make eyeMapC binary
-level = graythresh(eyeMapC);
+level = graythresh(y);
 eyeMapCBinary = im2bw(eyeMapC, level);    %use imbinarize instead of im2bw
 
 % Calculate eyeMap 
@@ -55,7 +55,7 @@ denumerator = 1 + imerode(imgGrayHist, SE); % N?mnare
 eyeMapL = double(numerator ./ denumerator)/255;
 
 % Combine C and L 
-imgMult = (eyeMapC .* eyeMapCBinary);
+imgMult = (eyeMapC .* eyeMapL);
 imgFuse = rgb2gray(imfuse(eyeMapC,eyeMapCBinary));
 figure; 
 subplot(2,2,1);
@@ -63,8 +63,8 @@ imshow(eyeMapCBinary);
 title('eyeMapCBinary'); 
 
 subplot(2,2,2);
-imshow(imgFuse);
-title('imgFuse'); 
+imshow(eyeMapC);
+title('eyeMapC'); 
 
 subplot(2,2,3);
 imshow(eyeMapL);
