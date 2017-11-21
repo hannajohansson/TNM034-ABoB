@@ -10,7 +10,9 @@ function faceAlignment()
 load ('db0Images');
 load ('db1Images');
 
-image = db1Images{2};
+%image = db1Images{2};
+image = db0Images{1};
+
 imageUint8 = im2uint8(image);
 iycbcrUint8=rgb2ycbcr(im2double(imageUint8)); %Convert to colorspace YCbCr
 

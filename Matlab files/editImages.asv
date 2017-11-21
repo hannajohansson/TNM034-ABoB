@@ -7,7 +7,7 @@ function editImages()
     for k = 1:4
         originalImage = im2double(db0Images{k});
         % figure;
-        % subplot(1, 3, 1), imshow(originalImage), title('Original image');
+        % subplot(1, 3, 1), imshow(originalImage);
 
         % Step 2: Convert to gray so we can get the mean luminance.
         grayImage = rgb2gray(originalImage);
@@ -31,7 +31,7 @@ function editImages()
         % Step 6: Recombine separate color channels into a single, true color RGB image.
         editedImage = cat(3, redChannel, greenChannel, blueChannel);
         editedImage = min(editedImage, 1);
-        % subplot(1, 3, 2), imshow(editedImage), title('Edited image');
+        % subplot(1, 3, 2), imshow(editedImage), title('Edited image');;
 
         db0Images{k} = editedImage;
     end
