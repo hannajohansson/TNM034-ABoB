@@ -32,7 +32,8 @@ faceDetection();
 %disp('-----------------------------------------------');
 %disp('  PART 2: Face alignment ');
 %disp('-----------------------------------------------');
-%faceAlignment();
+disp('--- Aligning the face.. ---');
+faceAlignment();
 
 
 %disp('-----------------------------------------------');
