@@ -11,24 +11,13 @@ load ('db0Images');
 load ('db1Images');
 load ('db1Faces');
 
-currentFace = 12;
+currentFace = ;
 image = db1Images{currentFace};
 faceMask = db1Faces{currentFace};
 %image = db0Images{2};
 
 %Convert to colorspace YCbCr
 iycbcr = rgb2ycbcr(image); 
-
-%----------------------------------------------------------------
-%                    faceMask
-%----------------------------------------------------------------
-
-% Make faceMask binary
-faceMaskBin = im2bw(faceMask, 0.01);    %use imbinarize instead of im2bw
-SEr = strel('disk', 30, 8); % radius = 10, n(number of segments) = 8
-SDil = strel('disk', 6, 8); % radius = 10, n(number of segments) = 8
-faceMaskEr = imerode(imdilate(faceMaskBin, SDil), SEr);
-
 
 %                ----- Eyedetection -----
 %----------------------------------------------------------------
@@ -88,70 +77,82 @@ eyeMapL = normalize_matrix(eyeMapL,0,255);
 % Multiply C and L 
 imgMult = (eyeMapC .* eyeMapL);
 
+% Fuse C and L
+imgFuse = rgb2gray(imfuse(eyeMapL,eyeMapC));
+
 %----------------------------------------------------------------
 %                    Refine eyeMap to get finalEyeMap
 %----------------------------------------------------------------
 
-% Normalize imgMult
 imgMult = normalize_matrix(imgMult,0,1);
 
-% Dilate imgMult
+SDil = strel('disk', 6, 8); % radius = 10, n(number of segments) = 8
+imgFuseDil =  imdilate(imgFuse, SDil);
 imgMultDil =  imdilate(imgMult, SDil);
 
-% Make imgMultDil binary
-imgMultDilBin = im2bw(imgMultDil, 0.5);    %use imbinarize instead of im2bw
 
+% Make imgFuseDil binary
+imgFuseDilBin = im2bw(imgFuseDil, 0.7);    %use imbinarize instead of im2bw
+imgMultDilBin = im2bw(imgMultDil, 0.7);    %use imbinarize instead of im2bw
 
-%{
-figure; 
-subplot(2,2,1);
-imshow(eyeMapCBinary);
-title('eyeMapCBinary'); 
+% Make faceMask binary
+faceMaskBin = im2bw(faceMask, 0.01);    %use imbinarize instead of im2bw
+SEr = strel('disk', 30, 8); % radius = 10, n(number of segments) = 8
+faceMaskEr = imerode(imdilate(faceMaskBin, SDil), SEr);
+
+% Add facemask to imgFuseDilBin
+finalEyeMap = (imgMultDilBin .* faceMaskEr);
+finalEyeMap2 = (imgFuseDilBin .* faceMaskEr);
+
 
 
 % -------------- PLOT ---------------
 figure;
-subplot(2,4,1);
-imshow(image);
-title('image'); 
-
-subplot(2,4,2);
+subplot(3,4,1);
 imshow(finalEyeMap);
+title('finalEyeMap Mult'); 
 
-title('finalEyeMap'); 
-%}
+subplot(3,4,2);
+imshow(finalEyeMap2);
+title('finalEyeMap Fuse');
 
-%               --------------- Mouth detection ---------------
-% MouthMap = Cr^2 * (Cr^2 - eta*Cr/Cb)^2
-% eta = 0,95 * 1/n * (sum of all elements in Cr^2 ) /(sum of all elements in Cr/Cb ) 
-
-% Split into separate chanels
-y =histeq(iycbcr(:,:,1)); 
-cb=histeq(iycbcr(:,:,2));
-cr=(iycbcr(:,:,3));
-
-
-subplot(2,4,3);
+subplot(3,4,3);
 imshow(uint8(eyeMapC));
 title('eyeMapC'); 
 
-subplot(2,4,4);
+subplot(3,4,4);
 imshow(eyeMapCBinary);
 title('eyeMapCBinary'); 
 
-subplot(2,4,5);
+subplot(3,4,5);
 imshow(imgMult);
 title('imgMult');
 
-subplot(2,4,6);
+subplot(3,4,6);
+imshow(imgFuseDil);
+title('imgFuseDil');
+
+subplot(3,4,7);
 imshow(uint8(eyeMapL));
 title('eyeMapL'); 
 
-subplot(2,4,7);
+subplot(3,4,8);
+imshow(imgFuse);
+title('imgFuse');
+
+subplot(3,4,9);
+imshow(imgFuseDil);
+title('imgFuseDil'); 
+
+subplot(3,4,10);
+imshow(imgFuseDilBin);
+title('imgFuseDilBin'); 
+
+subplot(3,4,11);
 imshow(faceMaskBin);
 title('faceMaskBin'); 
 
-subplot(2,4,8);
+subplot(3,4,12);
 imshow(faceMaskEr);
 title('faceMaskEr'); 
 
