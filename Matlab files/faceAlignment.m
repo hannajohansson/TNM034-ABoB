@@ -9,9 +9,13 @@ function faceAlignment()
 
 load ('db0Images');
 load ('db1Images');
+load ('db1Faces');
 
-image = db1Images{2};
-%image = db0Images{1};
+
+currentFace = 5;
+image = db1Images{currentFace};
+faceMask = db1Faces{currentFace};
+%image = db0Images{2};
 
 imageUint8 = im2uint8(image);
 iycbcrUint8=rgb2ycbcr(im2double(imageUint8)); %Convert to colorspace YCbCr
@@ -35,6 +39,10 @@ cbcr=cb./cr;
 
 eyeMapC = (cb2 + crinv2 + cbcr) /3;
 
+%Make eyeMapC binary
+level = graythresh(y);
+eyeMapCBinary = im2bw(eyeMapC, level);    %use imbinarize instead of im2bw
+
 % Calculate eyeMap 
 % EyeMapL = Y(x,y) * gsigma((x,y) / Y(x,y) ** gsigma((x,y) + 1 
 % * - dilation     ** - erotion
@@ -50,24 +58,48 @@ denumerator = 1 + imerode(imgGrayHist, SE); % N?mnare
 
 eyeMapL = double(numerator ./ denumerator)/255;
 
-% Combine C and L 
-imgMult = (eyeMapC .* eyeMapL);
+%{
+% Multiply C and L 
+imgMult = (eyeMapCBinary .* eyeMapL);
+SDil = strel('disk', 10, 8); % radius = 10, n(number of segments) = 8
+imgMultDil =  imdilate(imgMult, SDil);
+%}
+
+% Fuse C and L
+imgFuse = rgb2gray(imfuse(eyeMapL,eyeMapCBinary));
+SDil = strel('disk', 10, 8); % radius = 10, n(number of segments) = 8
+imgFuseDil =  imdilate(imgFuse, SDil);
+
+% Make imgFuseDil binary
+imgFuseDilBin = im2bw(imgFuseDil, 0.7);    %use imbinarize instead of im2bw
+
+% Make faceMask binary
+faceMaskBin = im2bw(faceMask, 0.01);    %use imbinarize instead of im2bw
+SEr = strel('disk', 30, 8); % radius = 10, n(number of segments) = 8
+faceMaskEr = imerode(imdilate(faceMaskBin, SDil), SEr);
+
+% Add facemask to imgFuseDilBin
+finalEyeMap = (imgFuseDilBin .* faceMaskEr);
+
+
 figure; 
 subplot(2,2,1);
+
 imshow(im2bw(imgMult, 0.5));
 title('imgMult bin'); 
 
+
 subplot(2,2,2);
-imshow(eyeMapC);
-title('eyeMapC'); 
+imshow(faceMaskEr);
+title('faceMaskEr'); 
 
 subplot(2,2,3);
-imshow(eyeMapL);
-title('eyeMapL'); 
+imshow(faceMaskBin);
+title('faceMaskBin'); 
 
 subplot(2,2,4);
-imshow(imgMult);
-title('imgMult'); 
+imshow(finalEyeMap);
+title('finalEyeMap'); 
 
 
 %               --------------- Mouth detection ---------------
@@ -130,5 +162,6 @@ subplot(2,2,4);
 imshow(image);
 title('image'); 
 %}
+
 
 end
