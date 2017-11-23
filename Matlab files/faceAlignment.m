@@ -11,157 +11,145 @@ load ('db0Images');
 load ('db1Images');
 load ('db1Faces');
 
-
-currentFace = 5;
+currentFace = 12;
 image = db1Images{currentFace};
 faceMask = db1Faces{currentFace};
 %image = db0Images{2};
 
-imageUint8 = im2uint8(image);
-iycbcrUint8=rgb2ycbcr(im2double(imageUint8)); %Convert to colorspace YCbCr
+%Convert to colorspace YCbCr
+iycbcr = rgb2ycbcr(image); 
 
-iycbcr = rgb2ycbcr(image);
-%iycbcrIm = double2im(iycbcr);
-% Koden funkar inte med edit_image 
-
-%                ----- Eyedetection -----
-% EyeMapC = 1/3 *(Cb^2 + (Cr inv))^2 + Cb/Cr)  
-
-% Split into separate chanels
-y= iycbcrUint8(:,:,1);
-cb=iycbcrUint8(:,:,2);
-cr=iycbcrUint8(:,:,3);
-
-% Create components for equation
-cb2=cb.^2;
-crinv2=(1-cr).^2;
-cbcr=cb./cr;
-
-eyeMapC = (cb2 + crinv2 + cbcr) /3;
-
-%Make eyeMapC binary
-level = graythresh(y);
-eyeMapCBinary = im2bw(eyeMapC, level);    %use imbinarize instead of im2bw
-
-% Calculate eyeMap 
-% EyeMapL = Y(x,y) * gsigma((x,y) / Y(x,y) ** gsigma((x,y) + 1 
-% * - dilation     ** - erotion
-    %imgGray = rgb2gray(im2double(image)); % Change to graymap
-    imgGray = rgb2gray((imageUint8)); % Change to graymap
-imgGrayHist = histeq(imgGray);
-
-SE = strel('disk', 15, 8); % radius = 15, n(number of segments) = 8
-
-% Create components for equation
-numerator =  imdilate(imgGrayHist, SE); % T?ljare
-denumerator = 1 + imerode(imgGrayHist, SE); % N?mnare
-
-eyeMapL = double(numerator ./ denumerator)/255;
-
-%{
-% Multiply C and L 
-imgMult = (eyeMapCBinary .* eyeMapL);
-SDil = strel('disk', 10, 8); % radius = 10, n(number of segments) = 8
-imgMultDil =  imdilate(imgMult, SDil);
-%}
-
-% Fuse C and L
-imgFuse = rgb2gray(imfuse(eyeMapL,eyeMapCBinary));
-SDil = strel('disk', 10, 8); % radius = 10, n(number of segments) = 8
-imgFuseDil =  imdilate(imgFuse, SDil);
-
-% Make imgFuseDil binary
-imgFuseDilBin = im2bw(imgFuseDil, 0.7);    %use imbinarize instead of im2bw
+%----------------------------------------------------------------
+%                    faceMask
+%----------------------------------------------------------------
 
 % Make faceMask binary
 faceMaskBin = im2bw(faceMask, 0.01);    %use imbinarize instead of im2bw
 SEr = strel('disk', 30, 8); % radius = 10, n(number of segments) = 8
+SDil = strel('disk', 6, 8); % radius = 10, n(number of segments) = 8
 faceMaskEr = imerode(imdilate(faceMaskBin, SDil), SEr);
 
-% Add facemask to imgFuseDilBin
-finalEyeMap = (imgFuseDilBin .* faceMaskEr);
+
+%                ----- Eyedetection -----
+%----------------------------------------------------------------
+%                   eyeMapC
+%
+% EyeMapC = 1/3 *(Cb^2 + (Cr inv))^2 + Cb/Cr)  
+%----------------------------------------------------------------
+
+% Split into separate chanels, should be normalized [0,255]
+y = iycbcr(:,:,1);
+cb = iycbcr(:,:,2);
+cr = iycbcr(:,:,3);
+
+% Create components for equation
+cb2 = cb.^2;
+crinv2 = (255-cr).^2;
+cbcr = cb./cr;
+
+% Normalize to [0,255]
+cb2 = normalize_matrix(cb2,0,255);
+crinv2 = normalize_matrix(crinv2,0,255);
+cbcr = normalize_matrix(cbcr,0,255);
+
+% Create eyeMapC and normalize
+eyeMapC = (cb2 + crinv2 + cbcr) ./ 3;
+eyeMapC = normalize_matrix(eyeMapC,0,255);
+
+% Make eyeMapC binary
+%level = graythresh(y);
+eyeMapCBinary = im2bw(uint8(eyeMapC), 0.5); %use imbinarize instead of im2bw
 
 
-figure; 
-subplot(2,2,1);
+%----------------------------------------------------------------
+%                   eyeMapL
+%
+% EyeMapL = Y(x,y) * gsigma((x,y) / Y(x,y) ** gsigma((x,y) + 1 
+% * - dilation     ** - erotion
+%----------------------------------------------------------------
 
-imshow(im2bw(imgMult, 0.5));
-title('imgMult bin'); 
+% Change to graymap
+imgGray = rgb2gray(image); 
+imgGrayHist = histeq(imgGray);
+
+% Create components for equation
+SE = strel('disk', 15, 8); % radius = 15, n(number of segments) = 8
+numerator =  imdilate(imgGrayHist, SE); % T?ljare
+denumerator = 1 + imerode(imgGrayHist, SE); % N?mnare
+
+% Create eyeMapL and normalize
+eyeMapL = numerator ./ denumerator;
+eyeMapL = normalize_matrix(eyeMapL,0,255);
 
 
-subplot(2,2,2);
-imshow(faceMaskEr);
-title('faceMaskEr'); 
+%----------------------------------------------------------------
+%                    Combine eyeMapC and eyeMapL
+%----------------------------------------------------------------
+% Multiply C and L 
+imgMult = (eyeMapC .* eyeMapL);
 
-subplot(2,2,3);
+%----------------------------------------------------------------
+%                    Refine eyeMap to get finalEyeMap
+%----------------------------------------------------------------
+
+% Normalize imgMult
+imgMult = normalize_matrix(imgMult,0,1);
+
+% Dilate imgMult
+imgMultDil =  imdilate(imgMult, SDil);
+
+% Make imgMultDil binary
+imgMultDilBin = im2bw(imgMultDil, 0.5);    %use imbinarize instead of im2bw
+
+% Add facemask to imgMultDilBin
+finalEyeMap = (imgMultDilBin .* faceMaskEr);
+
+
+
+% -------------- PLOT ---------------
+figure;
+subplot(2,4,1);
+imshow(image);
+title('image'); 
+
+subplot(2,4,2);
+imshow(finalEyeMap);
+title('finalEyeMap Mult'); 
+
+subplot(2,4,3);
+imshow(uint8(eyeMapC));
+title('eyeMapC'); 
+
+subplot(2,4,4);
+imshow(eyeMapCBinary);
+title('eyeMapCBinary'); 
+
+subplot(2,4,5);
+imshow(imgMult);
+title('imgMult');
+
+subplot(2,4,6);
+imshow(uint8(eyeMapL));
+title('eyeMapL'); 
+
+subplot(2,4,7);
 imshow(faceMaskBin);
 title('faceMaskBin'); 
 
-subplot(2,2,4);
-imshow(finalEyeMap);
-title('finalEyeMap'); 
+subplot(2,4,8);
+imshow(faceMaskEr);
+title('faceMaskEr'); 
 
 
-%               --------------- Mouth detection ---------------
-% MouthMap = Cr^2 * (Cr^2 - eta*Cr/Cb)^2
-% eta = 0,95 * 1/n * (sum of all elements in Cr^2 ) /(sum of all elements in Cr/Cb ) 
 
-% Split into separate chanels
-y =histeq(iycbcr(:,:,1)); 
-cb=histeq(iycbcr(:,:,2));
-cr=(iycbcr(:,:,3));
-
-% Create components for equation, has to be normalized to the range 0->1
-%   When we work with doubles, the normalization = [0,1] <- now! 
-%   When we work with uint8, the normalization = [0,255]
-cr2=cr.^2 ;
-cr2Norm = ((cr2 -min(cr2(:)))./ ( max(cr2(:) - min(cr2(:))))); 
-crcb=cr./cb;
-crcbNorm = ((crcb -min(cbcr(:))) ./ ( max(crcb(:) - min(cbcr(:)))));
-
-% Calculate eta  
-etaNum = mean2(cr.^2);
-etaDenum = mean2(cr(:) ./ cb(:)); 
-eta = 0.95  * (etaNum / etaDenum);
-
-% Calculate the mouthMap 
-mouthMapC = cr2Norm .* (cr2Norm - (eta.*crcbNorm)).^2;
-%mouthMapC = im2bw(mouthMapC, 0.9);
-% dilation and erosion
-SED = strel('disk', 20, 8); % radius = 15, n(number of segments) = 8
-%SED = strel('rectangle', [3,10]);
-SEE = strel('disk', 16, 8); % radius = 15, n(number of segments) = 8
-%SEE = strel('rectangle', [3,10]); % radius = 15, n(number of segments) = 8
+%--------------- Mouth detection ---------------
+%mouthMap();
 
 
-mouthMapCDil = imdilate(im2uint8(mouthMapC), SED);
-%mouthMapCEr = imerode(im2uint8(mouthMapC), SE2);
+%--------------- Find position of objects ---------------
 
-
-mouthMapDE = imerode(im2uint8(mouthMapCDil), SEE);
-
-mouthLevel = graythresh(image);
-mouthMapDELevel = im2bw(mouthMapDE,0.7);
-% mouthMapCDil = imdilate(mouthMapC);
-
-%{
-figure;
-subplot(2,2,1);
-imshow(mouthMapDELevel);
-title('mouthMapDELevel'); 
-
-subplot(2,2,2);
-imshow(mouthMapDE);
-title('mouthMapDE'); 
-
-subplot(2,2,3);
-imshow(mouthMapC);
-title('mouthMapC'); 
-
-subplot(2,2,4);
-imshow(image);
-title('image'); 
-%}
-
+%bwlabel --> label all objects in the image
+%imfeatures --> find features of objects. typ mitten av ett object/central
+%mass
 
 end
