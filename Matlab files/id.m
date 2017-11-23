@@ -52,6 +52,9 @@ faceAlignment();
 % PART 4: Description
     % Creating Eigenfaces
     % Using PCA (Principle Component Analysis)???
+    
+%disp('--- Creating eigenfaces.. ---');
+%createEigenfacesPCA(); 
 
 %disp('-----------------------------------------------');
 %disp('  PART 5: Feature Extraction ');

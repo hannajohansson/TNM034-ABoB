@@ -1,6 +1,6 @@
 function faceDetection() 
 
-    % Step 1: Load image
+    % Step 1: Load images
     load ('db1Images');
     
     % db1Faces

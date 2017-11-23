@@ -80,7 +80,7 @@ faceMaskEr = imerode(imdilate(faceMaskBin, SDil), SEr);
 % Add facemask to imgFuseDilBin
 finalEyeMap = (imgFuseDilBin .* faceMaskEr);
 
-
+%{
 figure; 
 subplot(2,2,1);
 imshow(eyeMapCBinary);
@@ -97,7 +97,7 @@ title('faceMaskBin');
 subplot(2,2,4);
 imshow(finalEyeMap);
 title('finalEyeMap'); 
-
+%}
 
 %               --------------- Mouth detection ---------------
 % MouthMap = Cr^2 * (Cr^2 - eta*Cr/Cb)^2
