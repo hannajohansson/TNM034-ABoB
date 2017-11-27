@@ -4,9 +4,9 @@ function imageRead()
     % db0
     numfiles0 = 4;
     db0Images = cell(1, numfiles0);
-        for k = 1:numfiles0
-          myfilename = sprintf('images/db0/db0_%d.jpg', k);
-          db0Images{k} = importdata(myfilename);
+        for m = 1:numfiles0
+          myfilename = sprintf('images/db0/db0_%d.jpg', m);
+          db0Images{m} = importdata(myfilename);
           %imshow(db0Images{k})
         end
         
@@ -28,6 +28,20 @@ function imageRead()
         end
         
     %save cell of images
-    save 'db1Images' db1Images;    
+    save 'db1Images' db1Images;   
+    
+    % --- TEST WITH FEWER IMAGES - REMOVE LATER -------------
+    % read normKings
+    numfiles2 = 3;
+    dbNormKings = cell(1, numfiles2);
+        for m = 1:numfiles2
+          myfilename = sprintf('normKings/norm_%d.jpg', m);
+          dbNormKings{m} = importdata(myfilename);
+          %figure, imshow(dbNormKings{k})
+        end
+        
+    %save cell of images
+    save 'dbNormKings' dbNormKings;
+    % --------------------------------------------------------
 
 end
