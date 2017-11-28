@@ -37,12 +37,12 @@ function editedImage = editImages(image)
     for k = 1:4
 
         originalImage = im2double(db0Images{k});
-        % figure;
-        % subplot(1, 3, 1), imshow(originalImage), title('Original image');
+         %figure;
+         %subplot(1, 3, 1), imshow(originalImage), title('Original image');
 
         % Step 2: Convert to gray so we can get the mean luminance.
         grayImage = rgb2gray(originalImage);
-
+        J = imadjust(grayImage);
         % Step 3: Extract the individual red, green, and blue color channels.
         redChannel = originalImage(:, :, 1);
         greenChannel = originalImage(:, :, 2);
@@ -51,8 +51,10 @@ function editedImage = editImages(image)
         % Step 4: Mean 
         meanRed = mean2(redChannel);
         meanGreen = mean2(greenChannel);
-        meanBlue = mean2(blueChannel);
-        meanGray = mean2(grayImage);
+
+        meanBlue = mean2(blueChannel); 
+        meanGray = mean2(J);
+
 
         % Step 5: Make all channels have the same mean
         redChannel = (redChannel * meanGray / meanRed);
@@ -62,9 +64,9 @@ function editedImage = editImages(image)
         % Step 6: Recombine separate color channels into a single, true color RGB image.
         editedImage = cat(3, redChannel, greenChannel, blueChannel);
         editedImage = min(editedImage, 1);
-        % subplot(1, 3, 2), imshow(editedImage), title('Edited image');
+        %subplot(1, 3, 2), imshow(editedImage), title('Edited image');
 
-        db0Images{k} = editedImage;
+        db0Images{k} =histeq( editedImage);
     end
     
     save 'db0Images' db0Images;
@@ -74,13 +76,15 @@ function editedImage = editImages(image)
     load ('db1Images');
 
     for k = 1:16
-      
-       originalImage = im2double(db1Images{k});
-        % figure;
-        % subplot(1, 2, 1), imshow(originalImage), title('Original image');
+
+       
+        originalImage = im2double(db1Images{k});
+         %figure;
+         %subplot(1, 2, 1), imshow(originalImage), title('Original image');
 
         % Step 2: Convert to gray so we can get the mean luminance.
         grayImage = rgb2gray(originalImage);
+        J = imadjust(grayImage);
 
         % Step 3: Extract the individual red, green, and blue color channels.
         redChannel = originalImage(:, :, 1);
@@ -98,7 +102,7 @@ function editedImage = editImages(image)
         meanRed = mean2(redChannel);
         meanGreen = mean2(greenChannel);
         meanBlue = mean2(blueChannel); 
-        meanGray = mean2(grayImage);
+        meanGray = mean2(J);
 
         % Step 5: Make all channels have the same mean
         redChannel =  (redChannel * meanGray / meanRed);
@@ -112,22 +116,15 @@ function editedImage = editImages(image)
         %}
         % Step 6: Recombine separate color channels into a single, true color RGB image.
         editedImage = cat(3, redChannel, greenChannel, blueChannel);
-       
-        %{
-        subplot(3, 3, 7), imshow(originalImage)
-        subplot(3, 3, 8), imshow(editedImage)
-        %}
-        
-        %figure;
-       %subplot(2, 3, 1), imshow(originalImage);
-       % subplot(2, 3, 2), imshow(editedImage);
-        db1Images{k} = editedImage;
+
+        %subplot(1, 2, 2), imshow(editedImage), title('Edited image');
+
+        db1Images{k} = histeq(editedImage);
 
     end
     
     %save cell of images
-    save 'db1Images' db1Images;  
-  
-    %}
+    %save 'db1Images' db1Images;  
+
 
 end
