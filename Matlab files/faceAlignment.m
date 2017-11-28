@@ -30,8 +30,9 @@ iycbcr = rgb2ycbcr(image);
 % Make faceMask binary
 faceMaskBin = im2bw(faceMask, 0.01);    %use imbinarize instead of im2bw
 SEr = strel('disk', 30, 8); % radius = 10, n(number of segments) = 8
+SEr2 = strel('disk', 5, 8); % radius = 10, n(number of segments) = 8
 SDil = strel('disk', 6, 8); % radius = 10, n(number of segments) = 8
-faceMask = imerode(imdilate(faceMaskBin, SDil), SEr);
+faceMask = imerode(imerode(imdilate(faceMaskBin, SDil), SEr), SEr2);
 
 %----------------------------------------------------------------
 %                 eyes and mouth detection
