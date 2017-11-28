@@ -61,27 +61,6 @@ imgMult2 = (eyeMapC .*eyeMapL );
 %                    Refine eyeMap to get finalEyeMap
 %----------------------------------------------------------------
 
-
-% ---------
-      
-         grayImage = rgb2gray(image);
-
-        % Step 3: Extract the individual red, green, and blue color channels.
-        redChannel = image(:, :, 1);
-        greenChannel = image(:, :, 2);
-        blueChannel = image(:, :, 3);
-
-        % Step 4: Mean 
-        meanRed = mean2(redChannel);
-        meanGreen = mean2(greenChannel);
-        meanBlue = mean2(blueChannel);
-        meanGray = mean2(grayImage);
-        allMean = (meanRed + meanGreen + meanBlue + meanGray) / 4;
-
-% ---------
-
-
-
 % Normalize imgMult
 imgMult = normalizeMatrix(imgMult,0,1);
 imgMult2 = normalizeMatrix(imgMult2,0,1);
@@ -99,16 +78,19 @@ imgMultDil =  imdilate(imgMult, SDil);
 imgMultDilBin = im2bw(imgMultDil, 0.5);    %use imbinarize instead of im2bw
 %imgMultDilBin2 = im2bw(imgMultDil2, 0.5);    %use imbinarize instead of im2bw
 
-mouthLevel = graythresh(image)
-mouthLevel2 = (mouthLevel* 0.75)/2
-imgMultDilBin2 = im2bw(imgMult2,mouthLevel2);
+mouthLevel1 = graythresh(image)
+
+MOUTHLEVEL = (((1-graythresh(eyeMapL)) + (1-graythresh(eyeMapC)) + (1-graythresh(image))) /3) -0.05
+imgMultDilBin2 = im2bw(imgMult2,MOUTHLEVEL);
 
 % Add facemask to imgMultDilBin
 finalEyeMap = (imgMultDilBin .* faceMask);
 finalEyeMap2 = (imgMultDilBin2 .* faceMask);
 
+
+
 figure;
-subplot(3,2,1);
+subplot(4,4,1);
 imshow(image);
 title('image'); 
 

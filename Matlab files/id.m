@@ -29,7 +29,7 @@ imageRead();
     [rows, length] = size(db1Images);
     
     disp('--- Processing image.. ---');
-    for k = 1:length
+    for k = 1:4
         disp(k);
         %Take one image at a time from the db
         image = im2double(db1Images{k});
