@@ -5,16 +5,21 @@
         % Combine them to one map 
     % Mouthmap
 
-function faceAlignment()
+function faceAlignment(editedImage, faceMask)
 
 load ('db0Images');
 load ('db1Images');
 load ('db1Faces');
 
-currentFace = 4;
+
+image = editedImage;
+
+%{
+currentFace = 11;
 image = db1Images{currentFace};
 faceMask = db1Faces{currentFace};
 %image = db0Images{2};
+%}
 
 %Convert to colorspace YCbCr
 iycbcr = rgb2ycbcr(image); 
