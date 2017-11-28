@@ -1,5 +1,7 @@
+% matrix = matrix to be normalized
+% [x, y] = e.g. [0, 255]
 
-function [normalized]= normalize_matrix(matrix, x, y)
+function [normalized]= normalizeMatrix(matrix, x, y)
 
      % Normalize to [0, 1]:
      m = min(matrix(:));

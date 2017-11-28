@@ -7,65 +7,90 @@
 % id: The identity number (integer) of the identified person,
 
 % i.e.?1?, ?2?,...,?16?for the persons belonging to ?db1? 
-% and ?0?for allother faces.
-
-%
-% Your program code.
+% and ?0? for allother faces.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+im = imread('images/db0/db0_1.jpg');
+
+%% Run the face detection for all images in the database
+
+%-----------------------------------------------------
+%       PART 0: Read and edit images
+%-----------------------------------------------------
 disp('--- Reading images.. ---');
 imageRead();
-disp('--- Editing images.. ---');
-editImages();
 
+%-----------------------------------------------------
+%    Loop over db and do each step for each image
+%-----------------------------------------------------
 
-%disp('-----------------------------------------------');
-%disp('  PART 1: Face detection ');
-%disp('-----------------------------------------------');
-% PART 1: Face detection 
-    %Find face mask
+    % Load images
+    load ('db1Images');
+    [rows, length] = size(db1Images);
     
-disp('--- Detecting face.. ---');
-faceDetection();
-
-
-%disp('-----------------------------------------------');
-%disp('  PART 2: Face alignment ');
-%disp('-----------------------------------------------');
-disp('--- Aligning the face.. ---');
-faceAlignment();
-
-
-%disp('-----------------------------------------------');
-%disp('  PART 3: Appearence Normalization ');
-%disp('-----------------------------------------------');
-% PART 3: Appearance Normalization
-    % Crop and normalize for 
-        % Scale +-10%
-        % Rotation +-5?
-        % Tone value +-30%
-
+    disp('--- Processing image.. ---');
+    for k = 1:length
+        disp(k);
+        %Take one image at a time from the db
+        image = im2double(db1Images{k});
         
-%disp('-----------------------------------------------');
-%disp('  PART 4: Feature Description ');
-%disp('-----------------------------------------------');
-% PART 4: Description
-    % Creating Eigenfaces
-    % Using PCA (Principle Component Analysis)???
+        editedImage = editImages(image);
+
+        %-----------------------------------------------------
+        %       PART 1: Face detection
+        %-----------------------------------------------------
+        %Find face mask 
+        faceMask = faceDetection(editedImage); 
+
+        %-----------------------------------------------------
+        %       PART 2: Face alignment
+        %-----------------------------------------------------
+        faceAlignment(editedImage, faceMask);
+
+        %-----------------------------------------------------
+        %       PART 3: Appearence Normalization
+        %-----------------------------------------------------
+        % Crop and normalize for 
+            % Scale +-10%
+            % Rotation +-5?
+            % Tone value +-30%
+    end
+    disp('--- Database completly processed. ---');
     
-%disp('--- Creating eigenfaces.. ---');
+%% Run the face detection for the image im to be compared with the db
+
+disp('--- Process the input image im.. ---');
+editedImage = editImages(im);
+faceMask = faceDetection(editedImage); 
+faceAlignment(editedImage, faceMask);
+%Appearence Normalization
+
+
+
+%% Match the input image with the database images
+
+%-----------------------------------------------------
+%       PART 4: Feature Description
+%-----------------------------------------------------     
+% Creating Eigenfaces
+% Using PCA (Principle Component Analysis)
+
+disp('--- Creating eigenfaces.. ---');
 %createEigenfacesPCA(); 
+        
+%-----------------------------------------------------
+%       PART 5: Feature Extraction
+%-----------------------------------------------------  
+% Plot feature description for all images in db  
+disp('--- Feature extraction.. ---');
 
-%disp('-----------------------------------------------');
-%disp('  PART 5: Feature Extraction ');
-%disp('-----------------------------------------------');
-% PART 5: Feature Extraction
-    % Plot feature description for all images in db  
+%-----------------------------------------------------
+%       PART 6: Matching
+%----------------------------------------------------- 
+% Compare an image with the db and find the closest match
+% Decide if the closest match is close enough
+disp('--- Comparing im with db.. ---');
 
-%disp('-----------------------------------------------');
-%disp('  PART 6: Matching ');
-%disp('-----------------------------------------------');
-% PART 6: Matching
-    % Compare an image with the db and find the closest match
-    % Decide if the closest match is close enough
+
+
 
