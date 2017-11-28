@@ -11,7 +11,7 @@ load ('db0Images');
 load ('db1Images');
 load ('db1Faces');
 
-currentFace = 11;
+currentFace = 4;
 image = db1Images{currentFace};
 faceMask = db1Faces{currentFace};
 %image = db0Images{2};
@@ -37,6 +37,7 @@ finalMouthMap = mouthMap(image, iycbcr, faceMask);
 %----------------------------------------------------------------
 %                 plot images, use uint8 to plot images
 %----------------------------------------------------------------
+%{
 figure;
 subplot(2,2,1);
 imshow(image);
@@ -53,13 +54,38 @@ title('finalEyeMap');
 subplot(2,2,4);
 imshow(finalMouthMap);
 title('finalMouthMap'); 
+%}
 
 %----------------------------------------------------------------
-%                    Find position of objects
+%                 find position of objects
 %----------------------------------------------------------------
-
 %bwlabel --> label all objects in the image
-%imfeatures --> find features of objects. typ mitten av ett object/central
-%mass
+%imfeatures --> find features of objects.
+
+% Label all objects in finalMouthMap 
+% numMouth = number of objects found in the mouthMap
+% mouthStats = coordinates of the centroids for each object
+[mouthMapLabel, numMouth] = bwlabel(finalMouthMap);
+mouthStats = regionprops(mouthMapLabel, 'Centroid');
+
+[eyeMapLabel, numEyes] = bwlabel(finalEyeMap);
+eyeStats = regionprops(eyeMapLabel, 'Centroid');
+
+%{
+subplot(2,2,3);
+mCentroids = cat(1, mouthStats.Centroid);
+imshow(finalMouthMap)
+hold on
+plot(mCentroids(:,1),mCentroids(:,2), 'b*')
+hold off
+
+eCentroids = cat(1, eyeStats.Centroid);
+subplot(2,2,4);
+imshow(finalEyeMap)
+hold on
+plot(eCentroids(:,1),eCentroids(:,2), 'b*')
+hold off
+%}
+
 
 end

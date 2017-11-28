@@ -33,9 +33,13 @@ SEE = strel('disk', 16, 8); % radius = 15, n(number of segments) = 8
 mouthMapCDil = imdilate(im2uint8(mouthMapC), SED);
 mouthMapDE = imerode(im2uint8(mouthMapCDil), SEE);
 
+
 % Make mouthMap binary
 %mouthLevel = graythresh(image); %not currently used
-mouthMapDELevel = im2bw(mouthMapDE,0.7);
+%mouthMapDELevel = im2bw(mouthMapDE,0.7);
+
+mouthLevel = graythresh(image); 
+mouthMapDELevel = im2bw(mouthMapDE,(mouthLevel +0.2) );
 
 % Add facemask to mouthMapDELevel
 finalMouthMap = (mouthMapDELevel .* faceMask);
@@ -46,20 +50,13 @@ finalMouthMap = (mouthMapDELevel .* faceMask);
 %{
 figure;
 subplot(2,2,1);
-imshow(mouthMapDELevel);
-title('mouthMapDELevel'); 
+imshow(image);
+title('image'); 
 
 subplot(2,2,2);
-imshow(mouthMapDE);
-title('mouthMapDE'); 
-
-subplot(2,2,3);
-imshow(mouthMapC);
-title('mouthMapC'); 
-
-subplot(2,2,4);
-imshow(image);
-title('image');
+imshow(finalMouthMap);
+title('finalMouthMap'); 
 %}
+
 
 end

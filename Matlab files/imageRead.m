@@ -1,6 +1,6 @@
 function imageRead() 
 % Read all images from db0 and put them in cell 
-
+%{
     % db0
     numfiles0 = 4;
     db0Images = cell(1, numfiles0);
@@ -12,7 +12,7 @@ function imageRead()
         
     %save cell of images
     save 'db0Images' db0Images;
-
+%}
     % db1
     numfiles1 = 16;
     db1Images = cell(1, numfiles1);

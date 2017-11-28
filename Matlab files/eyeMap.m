@@ -29,7 +29,7 @@ eyeMapC = normalizeMatrix(eyeMapC,0,255);
 
 % Make eyeMapC binary
 %level = graythresh(y);
-eyeMapCBinary = im2bw(uint8(eyeMapC), 0.5); %use imbinarize instead of im2bw
+%eyeMapCBinary = im2bw(uint8(eyeMapC), 0.5); %use imbinarize instead of im2bw
 
 %----------------------------------------------------------------
 %                   eyeMapL
@@ -56,21 +56,81 @@ eyeMapL = normalizeMatrix(eyeMapL,0,255);
 % Multiply C and L 
 imgMult = (eyeMapC .* eyeMapL);
 
+imgMult2 = (eyeMapC .*eyeMapL );
 %----------------------------------------------------------------
 %                    Refine eyeMap to get finalEyeMap
 %----------------------------------------------------------------
+
+
+% ---------
+      
+         grayImage = rgb2gray(image);
+
+        % Step 3: Extract the individual red, green, and blue color channels.
+        redChannel = image(:, :, 1);
+        greenChannel = image(:, :, 2);
+        blueChannel = image(:, :, 3);
+
+        % Step 4: Mean 
+        meanRed = mean2(redChannel);
+        meanGreen = mean2(greenChannel);
+        meanBlue = mean2(blueChannel);
+        meanGray = mean2(grayImage);
+        allMean = (meanRed + meanGreen + meanBlue + meanGray) / 4;
+
+% ---------
+
+
+
 % Normalize imgMult
 imgMult = normalizeMatrix(imgMult,0,1);
+imgMult2 = normalizeMatrix(imgMult2,0,1);
+
 
 % Dilate imgMult
 SDil = strel('disk', 6, 8); % radius = 10, n(number of segments) = 8
+SDil2 = strel('disk', 6, 8); % radius = 10, n(number of segments) = 8
+
 imgMultDil =  imdilate(imgMult, SDil);
+%imgMultDil2 =  imdilate(imgMult2, SDil2);
+
 
 % Make imgMultDil binary
 imgMultDilBin = im2bw(imgMultDil, 0.5);    %use imbinarize instead of im2bw
+%imgMultDilBin2 = im2bw(imgMultDil2, 0.5);    %use imbinarize instead of im2bw
+
+mouthLevel = graythresh(image)
+mouthLevel2 = (mouthLevel* 0.75)/2
+imgMultDilBin2 = im2bw(imgMult2,mouthLevel2);
 
 % Add facemask to imgMultDilBin
 finalEyeMap = (imgMultDilBin .* faceMask);
+finalEyeMap2 = (imgMultDilBin2 .* faceMask);
+
+figure;
+subplot(3,2,1);
+imshow(image);
+title('image'); 
+
+subplot(3,2,2);
+imshow(uint8(eyeMapC));
+title('eyeMapC'); 
+
+subplot(3,2,3);
+imshow(uint8(eyeMapL));
+title('eyeMapL'); 
+
+subplot(3,2,4);
+imshow(imgMult2);
+title('imgMult2'); 
+
+subplot(3,2,5);
+imshow(finalEyeMap);
+title('finalEyeMap'); 
+
+subplot(3,2,6);
+imshow(finalEyeMap2);
+title('finalEyeMap2'); 
 
 %----------------------------------------------------------------
 %                    Plot images, use uint8 to plot images
