@@ -1,8 +1,7 @@
-function [featureVector] = createEigenfacesPCA(face)
-    % Gets a dataset or an image
+function createEigenfacesPCA(db)
     
     % Step 1: Create variables
-    [rows, cols] = size(face); % db or image
+    [rows, cols] = size(db); % db or image
     n = 300 * 400; % Facial image dimension
     M = cols; % Number of traning images in dbNormKings, M << n
     K = cols; % Number of Eigenfaces used, K <= M
@@ -12,7 +11,7 @@ function [featureVector] = createEigenfacesPCA(face)
     for k = 1:M
         
         % Step 2: Create gray image with only one channel
-        originalImage = im2double(face{k});
+        originalImage = im2double(db{k});
         grayNormImage = rgb2gray(originalImage); 
         
         % Step 3: Represent each image, Ii, as a n.vector xi
@@ -22,28 +21,32 @@ function [featureVector] = createEigenfacesPCA(face)
     end 
 
     % Step 4: Find mean face (the average face vector)
-    my = 1/M * xiSum;
+    meanFace = 1/M * xiSum; 
+    save 'meanFace' meanFace;
+    
     phiVec = zeros(n,M);
     
     for k = 1:M
         
         % Step 5: Subtract the mean face, my, for each face vector xi
-        phiVec(:,k) = xiVec(:,k) - my;
-        
+        phiVec(:,k) = xiVec(:,k) - meanFace;
+
     end 
     
     % Step 6: Find the covariance matrix, C = A * A' 
     % We have to calculate C = A' * A (size MxM) because of size issues
     A = phiVec;
-    C = A.' * A; % returns M eigenvectors, vi (size Mx1)
+    C = A.' * A; % returns M eigenvectors, vi (size Mx1) (MxM??)<--------
     [V, D] = eig(C); % V is the eigenvectors, D is the eigenvalues
         
     % Step 7: Compute the M largest eigenvectors ui for the nxn matrix A*A' 
     ui = A * V; % M eigenvectors ui
-
+    ui = ui/norm(ui); % Skala om
+    save 'ui' ui;
+    
     % Step 8: Reshape the eigenvectors into Eigenfaces (matrix)    
     % Feature vector: (large omega) wi? = [w1; w2; ...; wK]
     weights = ui.' * phiVec;
-    featureVector = weights;
-    
+    save 'weights' weights;
+
 end

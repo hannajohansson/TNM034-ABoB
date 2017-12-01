@@ -1,19 +1,6 @@
 function imageRead() 
-% Read all images from db0 and put them in cell 
-%{
-    % db0
-    numfiles0 = 4;
-    db0Images = cell(1, numfiles0);
-        for m = 1:numfiles0
-          myfilename = sprintf('images/db0/db0_%d.jpg', m);
-          db0Images{m} = importdata(myfilename);
-          %imshow(db0Images{k})
-        end
-        
-    %save cell of images
-    save 'db0Images' db0Images;
-%}
-    % db1
+
+    % Read all images from db0 and put them in cell 
     numfiles1 = 16;
     db1Images = cell(1, numfiles1);
         for l = 1:9
