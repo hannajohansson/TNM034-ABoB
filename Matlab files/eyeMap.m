@@ -66,7 +66,7 @@ imgMult = normalizeMatrix(imgMult,0,1);
 % Dilate imgMult
 SDil = strel('disk', 6, 8); % radius = 10, n(number of segments) = 8
 
-%imgMultDil =  imdilate(imgMult, SDil);
+imgMultDil =  imdilate(imgMult, SDil);
 %imgMultDil2 =  imdilate(imgMult2, SDil2);
 
 
@@ -74,9 +74,9 @@ SDil = strel('disk', 6, 8); % radius = 10, n(number of segments) = 8
 imgMultDilBin = im2bw(imgMultDil, 0.5);    %use imbinarize instead of im2bw
 %imgMultDilBin2 = im2bw(imgMultDil2, 0.5);    %use imbinarize instead of im2bw
 
-MOUTHLEVEL = (((1-graythresh(eyeMapL)) + (1-graythresh(eyeMapC))) /2) -0.05
+eyeLevel = (((1-graythresh(eyeMapL)) + (1-graythresh(eyeMapC))) /2) -0.05;
 
-imgMultDilBin2 = im2bw(imgMultDil,MOUTHLEVEL);
+imgMultDilBin2 = im2bw(imgMultDil,eyeLevel);
 
 % Add facemask to imgMultDilBin
 finalEyeMap = (imgMultDilBin .* faceMask);
