@@ -1,4 +1,4 @@
-function faceMask = faceDetection(editedImage) 
+function [faceMask] = faceDetection(editedImage) 
 
     % Step 1: Create YCbCr image
     % Converts the truecolor image RGB to the equivalent 
