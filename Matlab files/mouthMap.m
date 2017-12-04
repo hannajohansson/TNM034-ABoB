@@ -44,6 +44,31 @@ mouthMapDELevel = im2bw(mouthMapDE,(mouthLevel +0.2) );
 % Add facemask to mouthMapDELevel
 finalMouthMap = (mouthMapDELevel .* faceMask);
 
+%Filter objects in eyeMap depending on size of area
+%Keep 2 largest areas in the eyeMap
+
+
+[height, width, dim] = size(image);
+for r = 1:height
+    for c = 1:width
+        if(r < height*0.45) %top
+            finalMouthMap(r,c) = 0;
+        elseif(r > height*0.9) %bottom
+            finalMouthMap(r,c) = 0;
+        else
+        end
+        
+        if(c < width *0.1) %left
+            finalMouthMap(r,c) = 0;
+        elseif(c > width *0.9) %right
+            finalMouthMap(r,c) = 0;
+        else
+        end
+    end
+end
+
+finalMouthMap = bwareafilt(logical(finalMouthMap),1);
+
 %----------------------------------------------------------------
 %                    Plot images
 %----------------------------------------------------------------

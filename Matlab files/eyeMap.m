@@ -80,10 +80,35 @@ imgMultDilBin2 = im2bw(imgMultDil,eyeLevel);
 
 % Add facemask to imgMultDilBin
 finalEyeMap = (imgMultDilBin .* faceMask);
-finalEyeMap2 = (imgMultDilBin2 .* faceMask);
+%finalEyeMap2 = (imgMultDilBin2 .* faceMask);
+%finalEyeMap = finalEyeMap2;
+
+% Remmve unnessesary pixles
+[height, width, dim] = size(image);
+for r = 1:height
+    for c = 1:width
+        if(r < height*0.25) %top
+            finalEyeMap(r,c) = 0;
+        elseif(r > height*0.6) %bottom
+            finalEyeMap(r,c) = 0;
+        else
+        end
+        
+        if(c < width *0.1) %left
+            finalEyeMap(r,c) = 0;
+        elseif(c > width *0.9) %right
+            finalEyeMap(r,c) = 0;
+        else
+        end
+    end
+end
 
 
+%Filter objects in eyeMap depending on size of area
+%Keep 3 largest areas in the eyeMap
+finalEyeMap = bwareafilt(logical(finalEyeMap),2);
 
+%{
 figure;
 subplot(4,4,1);
 imshow(image);
@@ -107,7 +132,8 @@ title('finalEyeMap');
 
 subplot(3,2,6);
 imshow(finalEyeMap2);
-title('finalEyeMap2'); 
+title('finalEyeMap2');
+%}
 
 %----------------------------------------------------------------
 %                    Plot images, use uint8 to plot images

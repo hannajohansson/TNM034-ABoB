@@ -27,6 +27,10 @@ imageRead();
     % Load images
     load ('db1Images');
     [rows, length] = size(db1Images);
+   
+    lastImage = im2double(imread('images/db1/db1_15.jpg'));
+    editImage = editImages(lastImage);
+    bestFaceMask = faceDetection(editImage); 
     
     disp('--- Processing image.. ---');
     for k = 1:length
@@ -58,6 +62,7 @@ imageRead();
     disp('--- Database completly processed. ---');
     
 %% Run the face detection for the image im to be compared with the db
+
 
 disp('--- Process the input image im.. ---');
 editedImage = editImages(im);
