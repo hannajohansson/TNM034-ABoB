@@ -5,7 +5,7 @@
         % Combine them to one map 
     % Mouthmap
 
-function faceAlignment(editedImage, faceMask)
+function [leftEyeCoords, rightEyeCoords, mouthCoords] = faceAlignment(editedImage, faceMask)
 
 load ('db0Images');
 load ('db1Images');
@@ -162,8 +162,14 @@ hold off
 %----------------------------------------------------------------
 %                 save coordinates of eyes
 %----------------------------------------------------------------
-leftEyeCoords(1,:) = index(1,:);
-rightEyeCoords(1,:) = index(2,:);
+%check position to get right and left eye
+if index(1,1) < index(2,1)
+    leftEyeCoords(1,:) = index(1,:);
+    rightEyeCoords(1,:) = index(2,:);
+else
+    leftEyeCoords(1,:) = index(2,:);
+    rightEyeCoords(1,:) = index(1,:);
+end
 
 %----------------------------------------------------------------
 %                 plot triangle for eyes and mouth

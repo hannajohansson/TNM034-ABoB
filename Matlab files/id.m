@@ -10,7 +10,7 @@
 % and ?0? for allother faces.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-im = imread('images/db0/db0_1.jpg');
+im = imread('images/db0/db0_4.jpg');
 
 %% Run the face detection for all images in the database
 
@@ -62,7 +62,7 @@ imageRead();
 disp('--- Process the input image im.. ---');
 editedImage = editImages(im);
 faceMask = faceDetection(editedImage); 
-faceAlignment(editedImage, faceMask);
+[leftEyeCoords, rightEyeCoords, mouthCoords] = faceAlignment(editedImage, faceMask);
 %Appearence Normalization
 
 %% Match the input image with the database images
