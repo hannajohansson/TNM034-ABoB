@@ -47,7 +47,7 @@ imageRead();
         faceAlignment(editedImage, faceMask);
 
         %-----------------------------------------------------
-        %       PART 3: Appearence Normalization
+        %       PART 3: Appearance Normalization
         %-----------------------------------------------------
         % Crop and normalize for 
             % Scale +-10%
