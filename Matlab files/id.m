@@ -10,7 +10,7 @@
 % and ?0? for allother faces.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-im = imread('images/db0/db0_4.jpg');
+im = imread('images/db0/db0_2.jpg');
 
 %% Run the face detection for all images in the database
 
@@ -29,7 +29,7 @@ imageRead();
     [rows, length] = size(db1Images);
     
     disp('--- Processing image.. ---');
-    for k = 1:length
+    for k = 1:k
         disp(k);
         %Take one image at a time from the db
         image = db1Images{k};

@@ -48,6 +48,20 @@ finalMouthMap = (mouthMapDELevel .* faceMask);
 %Keep 2 largest areas in the eyeMap
 
 
+%----------------------------------------------------------------
+%                    Plot images
+%----------------------------------------------------------------
+%{
+figure;
+subplot(2,2,1);
+imshow(image);
+title('image'); 
+
+subplot(2,2,2);
+imshow(finalMouthMap);
+title('finalMouthMap'); 
+%}
+
 [height, width, dim] = size(image);
 for r = 1:height
     for c = 1:width
@@ -67,21 +81,6 @@ for r = 1:height
     end
 end
 
-finalMouthMap = bwareafilt(logical(finalMouthMap),1);
-
-%----------------------------------------------------------------
-%                    Plot images
-%----------------------------------------------------------------
-%{
-figure;
-subplot(2,2,1);
-imshow(image);
-title('image'); 
-
-subplot(2,2,2);
-imshow(finalMouthMap);
-title('finalMouthMap'); 
-%}
-
+finalMouthMap = bwareafilt(logical(finalMouthMap),2);
 
 end

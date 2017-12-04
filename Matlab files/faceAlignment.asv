@@ -5,7 +5,7 @@
         % Combine them to one map 
     % Mouthmap
 
-function [leftEyeCoords, rightEyeCoords, mouthCoordes] = faceAlignment(editedImage, faceMask)
+function [leftEyeCoords, rightEyeCoords, mouthCoords] = faceAlignment(editedImage, faceMask)
 
 load ('db0Images');
 load ('db1Images');
@@ -55,21 +55,35 @@ eCentroids = cat(1, eyeStats.Centroid);
 if(numMouth == 0)    %isempty(mouthStats)
     mouthCoords(1,1) = width*0.5;
     mouthCoords(1,2) = height*0.75;
-else 
+elseif(numMouth == 1) 
     mouthCoords(1,1) = mCentroids(1,1);
     mouthCoords(1,2) = mCentroids(1,2);
-    
-    %{
-    firstDist = width*0.5 - mCentroids(1,1);
-    secondDist = width*0.5 - mCentroids(2,1);
-    
-    % We use the first centroid in mCentroids. If the second "mouth" is
-    % closer to the middle, we want to use that instead
-    if firstDist > secondDist 
-        mCentroids(1,1) = mCentroids(2,1);
-        mCentroids(1,2) = mCentroids(2,2);
+else 
+    % mouthCoords are too close, check how centered they are
+    abs (mCentroids(1,2) - mCentroids(2,2) )
+    (height *0.01
+    if abs (mCentroids(1,2) - mCentroids(2,2) ) < (height *0.01)
+       firstDist = width*0.5 - mCentroids(1,1);
+        secondDist = width*0.5 - mCentroids(2,1);
+
+        % We use the first centroid in mCentroids. If the second "mouth" is
+        % closer to the middle, we want to use that instead
+        if firstDist > secondDist 
+           mouthCoords(1,1) = mCentroids(2,1);
+           mouthCoords(1,2) = mCentroids(2,2);
+        else
+           mouthCoords(1,1) = mCentroids(1,1);
+           mouthCoords(1,2) = mCentroids(1,2);
+        end 
+    else
+        if mCentroids(1,2) > mCentroids(2,2) 
+            mouthCoords(1,:) = mCentroids(1,:);
+        else 
+            mouthCoords(1,:) = mCentroids(2,:);
+        end        
     end
-    %}
+    
+
 end
 
 
