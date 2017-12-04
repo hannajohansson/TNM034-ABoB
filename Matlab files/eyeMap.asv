@@ -1,0 +1,164 @@
+%We need to send variables to the function from faceAlignment
+
+function finalEyeMap = eyeMap(image, iycbcr, faceMask)
+
+%----------------------------------------------------------------
+%                   eyeMapC
+%
+% EyeMapC = 1/3 *(Cb^2 + (Cr inv))^2 + Cb/Cr)  
+%----------------------------------------------------------------
+
+% Split into separate chanels, should be normalized [0,255]
+y = iycbcr(:,:,1);
+cb = iycbcr(:,:,2);
+cr = iycbcr(:,:,3);
+
+% Create components for equation
+cb2 = cb.^2;
+crinv2 = (255-cr).^2;
+cbcr = cb./cr;
+
+% Normalize to [0,255]
+cb2 = normalizeMatrix(cb2,0,255);
+crinv2 = normalizeMatrix(crinv2,0,255);
+cbcr = normalizeMatrix(cbcr,0,255);
+
+% Create eyeMapC and normalize
+eyeMapC = (cb2 + crinv2 + cbcr) ./ 3;
+eyeMapC = normalizeMatrix(eyeMapC,0,255);
+
+
+%----------------------------------------------------------------
+%                   eyeMapL
+%
+% EyeMapL = Y(x,y) * gsigma((x,y) / Y(x,y) ** gsigma((x,y) + 1 
+% * - dilation     ** - erotion
+%----------------------------------------------------------------
+% Change to graymap
+imgGray = rgb2gray(image); 
+imgGrayHist = histeq(imgGray);
+
+% Create components for equation
+LDil = strel('disk', 3, 8); % radius = 15, n(number of segments) = 8
+LEr = strel('disk', 10, 8); % radius = 15, n(number of segments) = 8
+numerator =  imdilate(imgGrayHist, LDil); % T?ljare
+denumerator = 1 + imerode(imgGrayHist, LEr); % N?mnare
+
+% Create eyeMapL and normalize
+eyeMapL = numerator ./ denumerator;
+eyeMapL = normalizeMatrix(eyeMapL,0,255);
+
+%----------------------------------------------------------------
+%                    Combine eyeMapC and eyeMapL
+%----------------------------------------------------------------
+imgMult = (eyeMapC .* eyeMapL);
+
+%----------------------------------------------------------------
+%                    Refine eyeMap to get finalEyeMap
+%----------------------------------------------------------------
+% Normalize imgMult
+imgMult = normalizeMatrix(imgMult,0,1);
+
+% Dilate imgMult
+DilMult = strel('disk', 5, 8);
+ErMult = strel('disk', 2, 8);
+imgMultDil =  imerode(imdilate(imgMult, DilMult), ErMult);
+
+% Make imgMultDil binary
+level = (1- (graythresh(imgMult) + graythresh(y))/2);
+imgMultDilBin = im2bw(imgMultDil, (level-0.2)); 
+
+%imgMultDilBin2 = im2bw(imgMultDil2, 0.5);    %use imbinarize instead of im2bw
+
+% --> eyeLevel = (((1-graythresh(eyeMapL)) + (1-graythresh(eyeMapC))) /2) -0.05;
+
+% --> imgMultDilBin2 = im2bw(imgMultDil,eyeLevel);
+
+% Add facemask to imgMultDilBin
+finalEyeMap = (imgMultDilBin .* faceMask);
+%finalEyeMap2 = (imgMultDilBin2 .* faceMask);
+%finalEyeMap = finalEyeMap2;
+
+% Remmve unnessesary pixles
+[height, width, dim] = size(image);
+for r = 1:height
+    for c = 1:width
+        if(r < height*0.3) %top
+            finalEyeMap(r,c) = 0;
+        elseif(r > height*0.6) %bottom
+            finalEyeMap(r,c) = 0;
+        else
+        end
+        
+        if(c < width *0.1) %left
+            finalEyeMap(r,c) = 0;
+        elseif(c > width *0.9) %right
+            finalEyeMap(r,c) = 0;
+        else
+        end
+    end
+end
+
+figure;
+subplot(4,4,1);
+imshow(image);
+title('image'); 
+
+subplot(3,2,2);
+imshow(uint8(eyeMapC));
+title('eyeMapC'); 
+
+subplot(3,2,3);
+imshow(uint8(eyeMapL));
+title('eyeMapL'); 
+
+subplot(3,2,4);
+imshow(imgMult);
+title('imgMult'); 
+
+subplot(3,2,5);
+imshow(finalEyeMap);
+title('finalEyeMap'); 
+
+%Filter objects in eyeMap depending on size of area
+%Keep 3 largest areas in the eyeMap
+finalEyeMap = bwareafilt(logical(finalEyeMap),2);
+
+%{
+
+[eyeMapLabel, numEyes] = bwlabel(finalEyeMap);
+eyeStats = regionprops(eyeMapLabel, 'Centroid');
+eCentroids = cat(1, eyeStats.Centroid);
+%}
+
+subplot(3,2,6);
+imshow(finalEyeMap);
+title('finalEyeMap2');
+
+
+%----------------------------------------------------------------
+%                    Plot images, use uint8 to plot images
+%----------------------------------------------------------------
+%{
+subplot(2,4,4);
+imshow(eyeMapCBinary);
+title('eyeMapCBinary'); 
+
+subplot(2,4,5);
+imshow(imgMult);
+title('imgMult');
+
+subplot(2,4,6);
+imshow(uint8(eyeMapL));
+title('eyeMapL'); 
+
+subplot(2,4,7);
+imshow(faceMaskBin);
+title('faceMaskBin'); 
+
+subplot(2,4,8);
+imshow(faceMaskEr);
+title('faceMaskEr'); 
+%}
+
+end

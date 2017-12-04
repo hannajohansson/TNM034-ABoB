@@ -10,7 +10,7 @@
 % and ?0? for allother faces.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-im = imread('images/db0/db0_2.jpg');
+im = imread('images/db0/db0_4.jpg');
 
 %% Run the face detection for all images in the database
 
@@ -32,7 +32,7 @@ imageRead();
 
     
     disp('--- Processing image.. ---');
-    for k = 1:k
+    for k = 1:length
         disp(k);
         %Take one image at a time from the db
         image = db1Images{k};
@@ -48,13 +48,13 @@ imageRead();
         %       PART 2: Face alignment
         %-----------------------------------------------------
         faceAlignment(editedImage, faceMask);
-
+        
         %-----------------------------------------------------
         %       PART 3: Appearance Normalization
         %-----------------------------------------------------
         % Crop and normalize for 
-        cropedImage = cropImage(eyeLeft, eyeRight, image);
-        cropedImages{k} = cropedImage;
+        %cropedImage = cropImage(eyeLeft, eyeRight, image);
+        %cropedImages{k} = cropedImage;
             % Scale +-10%
             % Rotation +-5?
             % Tone value +-30%
@@ -66,9 +66,10 @@ imageRead();
 
 disp('--- Process the input image im.. ---');
 editedImage = editImages(im);
-faceMask = faceDetection(editedImage); 
+faceMask = faceDetection(editedImage);
 faceAlignment(editedImage, faceMask);
-cropedIm = cropImage(eyeLeft, eyeRight, editedImage);
+
+%cropedIm = cropImage(eyeLeft, eyeRight, editedImage);
 
 %Appearence Normalization
 

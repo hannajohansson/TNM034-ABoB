@@ -27,13 +27,15 @@ imageRead();
     % Load images
     load ('db1Images');
     [rows, length] = size(db1Images);
-     save 
+
+    save 'cropedImages' db1Images;
+
+    
     disp('--- Processing image.. ---');
     for k = 1:length
-        %disp(k);
+        disp(k);
         %Take one image at a time from the db
-        image = im2double(db1Images{k});
-        
+        image = db1Images{k};
         editedImage = editImages(image);
 
         %-----------------------------------------------------
@@ -46,12 +48,13 @@ imageRead();
         %       PART 2: Face alignment
         %-----------------------------------------------------
         faceAlignment(editedImage, faceMask);
-
+        
         %-----------------------------------------------------
         %       PART 3: Appearance Normalization
         %-----------------------------------------------------
         % Crop and normalize for 
-        %cropImage(eyeLeft, eyeRight, image, k);
+        %cropedImage = cropImage(eyeLeft, eyeRight, image);
+        %cropedImages{k} = cropedImage;
             % Scale +-10%
             % Rotation +-5?
             % Tone value +-30%
@@ -63,8 +66,28 @@ imageRead();
 
 disp('--- Process the input image im.. ---');
 editedImage = editImages(im);
-faceMask = faceDetection(editedImage); 
-faceAlignment(editedImage, faceMask);
+faceMask = faceDetection(editedImage);
+
+%testImage = editedImage .* (double(faceMask) *0.9);
+%{
+[height, width, dim] = size(editedImage);
+
+testImage = editedImage;
+for r = 1:height
+    for c = 1:width
+        if(faceMask(r,c) == 0) 
+            testImage(r,c, :) = 0.5;
+        end
+    end
+end
+
+imshow(testImage)
+editedImageTest = editImages(testImage);
+faceAlignment(editedImageTest, faceMask);
+%}
+
+%cropedIm = cropImage(eyeLeft, eyeRight, editedImage);
+
 %Appearence Normalization
 
 %% Match the input image with the database images
@@ -86,4 +109,4 @@ faceAlignment(editedImage, faceMask);
 % Compare an image with the db and find the closest match
 % Decide if the closest match is close enough
 
-%result = faceRecognition(databas, bild);
+%result = faceRecognition(cropedImages, cropedIm);
