@@ -27,6 +27,9 @@ imageRead();
     % Load images
     load ('db1Images');
     [rows, length] = size(db1Images);
+
+    save 'cropedImages' db1Images;
+
     
     disp('--- Processing image.. ---');
     for k = 1:k
@@ -50,6 +53,8 @@ imageRead();
         %       PART 3: Appearance Normalization
         %-----------------------------------------------------
         % Crop and normalize for 
+        cropedImage = cropImage(eyeLeft, eyeRight, image);
+        cropedImages{k} = cropedImage;
             % Scale +-10%
             % Rotation +-5?
             % Tone value +-30%
@@ -62,7 +67,9 @@ imageRead();
 disp('--- Process the input image im.. ---');
 editedImage = editImages(im);
 faceMask = faceDetection(editedImage); 
-[leftEyeCoords, rightEyeCoords, mouthCoords] = faceAlignment(editedImage, faceMask);
+faceAlignment(editedImage, faceMask);
+cropedIm = cropImage(eyeLeft, eyeRight, editedImage);
+
 %Appearence Normalization
 
 %% Match the input image with the database images
@@ -84,4 +91,4 @@ faceMask = faceDetection(editedImage);
 % Compare an image with the db and find the closest match
 % Decide if the closest match is close enough
 
-%result = faceRecognition(databas, bild);
+%result = faceRecognition(cropedImages, cropedIm);
