@@ -1,6 +1,6 @@
 function imageRead() 
 
-    % Read all images from db0 and put them in cell 
+    % Read all images from db1 and put them in a cell 
     numfiles1 = 16;
     db1Images = cell(1, numfiles1);
         for l = 1:9
