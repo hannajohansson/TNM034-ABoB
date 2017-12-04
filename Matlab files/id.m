@@ -27,17 +27,12 @@ imageRead();
     % Load images
     load ('db1Images');
     [rows, length] = size(db1Images);
-   
-    lastImage = im2double(imread('images/db1/db1_15.jpg'));
-    editImage = editImages(lastImage);
-    bestFaceMask = faceDetection(editImage); 
     
     disp('--- Processing image.. ---');
     for k = 1:length
-        %disp(k);
+        disp(k);
         %Take one image at a time from the db
-        image = im2double(db1Images{k});
-        
+        image = db1Images{k};
         editedImage = editImages(image);
 
         %-----------------------------------------------------
