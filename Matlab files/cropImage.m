@@ -7,14 +7,14 @@ function [cropedImage] = cropImage(leftEyeCoords, rightEyeCoords, editedImage)
     theta = atand(nar/mot);
     deltaX = 140;
     
-    % Steg 1: Rotation
+    % Step 1: Rotation
     rotatedImage = imrotate(editedImage, theta, 'bilinear', 'crop');
 
-    % Steg 2: Scale
+    % Step 2: Scale
     scaleFactor = deltaX/hyp;
     scaledImage = imresize(rotatedImage, scaleFactor);
  
-    % Steg 3: Crop
+    % Step 3: Crop
     cropedImage = imcrop(scaledImage, [(leftEyeCoords(1,1)-50) (leftEyeCoords(1,2)-80) 299 399]);
     
     [rows, cols, dim] = size(cropedImage);

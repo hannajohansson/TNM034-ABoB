@@ -30,7 +30,7 @@ function [result] = compareFace(image)
     for k = 1:M
         ei(k) = norm(weightQuery - weights(:,k));
     end
-
+    ei
     % Step 6: Find the smallest ei
     eiMin = min(ei);
     
