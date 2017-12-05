@@ -142,6 +142,7 @@ end
 %----------------------------------------------------------------
 %                 plot images, use uint8 to plot images
 %----------------------------------------------------------------
+%{
 figure;
 subplot(2,2,1);
 imshow(faceMask);
@@ -158,7 +159,7 @@ imshow(finalEyeMap)
 hold on
 plot(index(:,1),index(:,2), 'b*')
 hold off
-
+%}
 %----------------------------------------------------------------
 %                 save coordinates of eyes
 %----------------------------------------------------------------
@@ -174,6 +175,7 @@ end
 %----------------------------------------------------------------
 %                 plot triangle for eyes and mouth
 %----------------------------------------------------------------
+%{
 subplot(2,2,2);
 imshow(image)
 hold on
@@ -185,5 +187,6 @@ line([leftEyeCoords(1),mouthCoords(1)],[leftEyeCoords(2),mouthCoords(2)],'LineWi
 % 3) Line between right eye and mouth
 line([rightEyeCoords(1),mouthCoords(1)],[rightEyeCoords(2), mouthCoords(2)],'LineWidth',2, 'color','r')
 hold off
+%}
 
 end

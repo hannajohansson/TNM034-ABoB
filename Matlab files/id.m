@@ -47,13 +47,13 @@ imageRead();
         %-----------------------------------------------------
         %       PART 2: Face alignment
         %-----------------------------------------------------
-        faceAlignment(editedImage, faceMask);
+        [leftEyeCoords, rightEyeCoords, mouthCoords] = faceAlignment(editedImage, faceMask);
 
         %-----------------------------------------------------
         %       PART 3: Appearance Normalization
         %-----------------------------------------------------
         % Crop and normalize for 
-        cropedImage = cropImage(eyeLeft, eyeRight, image);
+        cropedImage = cropImage(leftEyeCoords, rightEyeCoords, editedImage);
         cropedImages{k} = cropedImage;
             % Scale +-10%
             % Rotation +-5?
@@ -68,7 +68,7 @@ disp('--- Process the input image im.. ---');
 editedImage = editImages(im);
 faceMask = faceDetection(editedImage); 
 faceAlignment(editedImage, faceMask);
-cropedIm = cropImage(eyeLeft, eyeRight, editedImage);
+cropedIm = cropImage(leftEyeCoords, rightEyeCoords, editedImage);
 
 %Appearence Normalization
 
@@ -91,4 +91,4 @@ cropedIm = cropImage(eyeLeft, eyeRight, editedImage);
 % Compare an image with the db and find the closest match
 % Decide if the closest match is close enough
 
-%result = faceRecognition(cropedImages, cropedIm);
+result = faceRecognition(cropedImages, cropedIm);
