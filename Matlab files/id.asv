@@ -10,7 +10,7 @@
 % and ?0? for allother faces.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-im = imread('images/db0/db0_4.jpg');
+im = imread('images/db0/db0_1.jpg');
 
 %% Run the face detection for all images in the database
 
@@ -47,17 +47,14 @@ imageRead();
         %-----------------------------------------------------
         %       PART 2: Face alignment
         %-----------------------------------------------------
-
-        [leftEyeCoords, rightEyeCoords, mouthCoords] = faceAlignment(editedImage, faceMask);
-
+        faceAlignment(editedImage, faceMask);
+        
         %-----------------------------------------------------
         %       PART 3: Appearance Normalization
         %-----------------------------------------------------
         % Crop and normalize for 
-
-        cropedImage = cropImage(leftEyeCoords, rightEyeCoords, editedImage);
-        cropedImages{k} = cropedImage;
-
+        %cropedImage = cropImage(eyeLeft, eyeRight, image);
+        %cropedImages{k} = cropedImage;
             % Scale +-10%
             % Rotation +-5?
             % Tone value +-30%
@@ -70,8 +67,26 @@ imageRead();
 disp('--- Process the input image im.. ---');
 editedImage = editImages(im);
 faceMask = faceDetection(editedImage);
-faceAlignment(editedImage, faceMask);
-cropedIm = cropImage(leftEyeCoords, rightEyeCoords, editedImage);
+
+%testImage = editedImage .* (double(faceMask) *0.9);
+%{
+[height, width, dim] = size(editedImage);
+
+testImage = editedImage;
+for r = 1:height
+    for c = 1:width
+        if(faceMask(r,c) == 0) 
+            testImage(r,c, :) = 0.5;
+        end
+    end
+end
+
+imshow(testImage)
+editedImageTest = editImages(testImage);
+faceAlignment(editedImageTest, faceMask);
+%}
+
+%cropedIm = cropImage(eyeLeft, eyeRight, editedImage);
 
 %Appearence Normalization
 
@@ -94,4 +109,4 @@ cropedIm = cropImage(leftEyeCoords, rightEyeCoords, editedImage);
 % Compare an image with the db and find the closest match
 % Decide if the closest match is close enough
 
-result = faceRecognition(cropedImages, cropedIm);
+%result = faceRecognition(cropedImages, cropedIm);
