@@ -17,21 +17,5 @@ function imageRead()
         
     %save cells
     save 'db1Images' db1Images;   
-    
-    
-    
-    % --- TEST WITH FEWER IMAGES - REMOVE LATER -------------
-    % read normKings
-    numfiles2 = 3;
-    dbNormKings = cell(1, numfiles2);
-        for m = 1:numfiles2
-          myfilename = sprintf('normKings/norm_%d.jpg', m);
-          dbNormKings{m} = importdata(myfilename);
-          %figure, imshow(dbNormKings{k})
-        end
-        
-    %save cell of images
-    save 'dbNormKings' dbNormKings;
-    % --------------------------------------------------------
 
 end

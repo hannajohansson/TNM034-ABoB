@@ -1,7 +1,5 @@
-function [leftEyeCoords, rightEyeCoords, mouthCoords] = faceAlignment(editedImage, faceMask)
-load ('db0Images');
+function [leftEyeCoords, rightEyeCoords] = faceAlignment(editedImage, faceMask)
 load ('db1Images');
-load ('db1Faces');
 
 image = editedImage;
 
@@ -143,7 +141,7 @@ else
         end
     end 
     
-    %Check how many okej eyes
+    %Check how many okey eyes
     if(a == 1) %all eyes where below mouth, not okej
         %create two defalut eyes and store them in index
         index(1,1) = width*0.45;
@@ -177,6 +175,18 @@ else
 end
 
 %----------------------------------------------------------------
+%                 save coordinates of eyes
+%----------------------------------------------------------------
+%check position to get right and left eye
+if index(1,1) < index(2,1)
+    leftEyeCoords(1,:) = index(1,:);
+    rightEyeCoords(1,:) = index(2,:);
+else
+    leftEyeCoords(1,:) = index(2,:);
+    rightEyeCoords(1,:) = index(1,:);
+end
+
+%----------------------------------------------------------------
 %                 plot images, use uint8 to plot images
 %----------------------------------------------------------------
 %{
@@ -197,18 +207,6 @@ hold on
 plot(index(:,1),index(:,2), 'b*')
 hold off
 %}
-
-%----------------------------------------------------------------
-%                 save coordinates of eyes
-%----------------------------------------------------------------
-%check position to get right and left eye
-if index(1,1) < index(2,1)
-    leftEyeCoords(1,:) = index(1,:);
-    rightEyeCoords(1,:) = index(2,:);
-else
-    leftEyeCoords(1,:) = index(2,:);
-    rightEyeCoords(1,:) = index(1,:);
-end
 
 %----------------------------------------------------------------
 %                 plot triangle for eyes and mouth

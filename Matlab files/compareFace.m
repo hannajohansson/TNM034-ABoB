@@ -21,30 +21,27 @@ function [result] = compareFace(image)
 
     [rows, cols] = size(weights);
     M = cols;
+    ei = zeros(1,M);
     
     % Step 5: Using eigenfaces for face recognition
     % Find feature vector for unknown face - aka weightQuery
     % ei = Distance measure between queryImage to each 
     % feature vec for the M faces
     for k = 1:M
-        ei = abs(weightQuery - weights(:,k));
+        ei(k) = norm(weightQuery - weights(:,k));
     end
-    
+
     % Step 6: Find the smallest ei
-    eiMin = min(ei)
+    eiMin = min(ei);
     
     % Step 7: Define a threshold for acceptable distance
-    threshold = 0.5; % <-- example
+    threshold = 25; % <-- example
     
     % Step 8: Check if image is in database
     if eiMin <= threshold
-       disp('queryImage is person:')
        result = find(ei == min(ei));
-       disp(result)
     else 
-       disp('queryImage is not in database')
        result = 0;
-       disp(result)
     end
-    
+
 end

@@ -1,9 +1,6 @@
 function [editedImage] = editImages(image)
 
-%               -------------- image --------------
     originalImage = im2double(image);
-    % figure;
-    % subplot(1, 3, 1), imshow(originalImage), title('Original image');
 
     % Step 2: Convert to gray so we can get the mean luminance.
     grayImage = rgb2gray(originalImage);

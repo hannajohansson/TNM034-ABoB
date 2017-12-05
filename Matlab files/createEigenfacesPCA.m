@@ -36,7 +36,7 @@ function createEigenfacesPCA(db)
     % Step 6: Find the covariance matrix, C = A * A' 
     % We have to calculate C = A' * A (size MxM) because of size issues
     A = phiVec;
-    C = A.' * A; % returns M eigenvectors, vi (size Mx1) (MxM??)<--------
+    C = A.' * A; % returns M eigenvectors, vi (size Mx1)
     [V, D] = eig(C); % V is the eigenvectors, D is the eigenvalues
         
     % Step 7: Compute the M largest eigenvectors ui for the nxn matrix A*A' 
