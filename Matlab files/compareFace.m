@@ -35,7 +35,7 @@ function [result] = compareFace(image)
     eiMin = min(ei);
     
     % Step 7: Define a threshold for acceptable distance
-    threshold = 25; % <-- example
+    threshold = 16.5; % <-- example
     
     % Step 8: Check if image is in database
     if eiMin <= threshold
