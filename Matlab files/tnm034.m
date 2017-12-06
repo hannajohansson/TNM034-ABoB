@@ -6,7 +6,9 @@ function [id] = tnm034(im)
     % RUN "processDB" ONE TIME BEFORE THIS FUNCTION
 
     % REMOVE LATER
-    im = imread('testIm/db1_09_tone_-2.jpg');
+    im = imread('testIm/db1_09_combination.jpg');
+    % im = im*1.3; %+30%
+    % im = im*0.7; %-30%
 
     % Run the face detection for the image im to be compared with the db
     disp('--- Processing the input image.. ---');
