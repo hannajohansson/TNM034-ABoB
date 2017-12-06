@@ -13,7 +13,11 @@ function [cropedImage] = cropImage(leftEyeCoords, rightEyeCoords, editedImage)
     % Step 2: Scale
     scaleFactor = deltaX/hyp;
     scaledImage = imresize(rotatedImage, scaleFactor);
- 
+    
+    % Scale eye coordinates
+    leftEyeCoords(1,1) = leftEyeCoords(1,1) * scaleFactor;
+    leftEyeCoords(1,2) = leftEyeCoords(1,2) * scaleFactor;
+    
     % Step 3: Crop
     cropedImage = imcrop(scaledImage, [(leftEyeCoords(1,1)-50) (leftEyeCoords(1,2)-80) 299 399]);
     
