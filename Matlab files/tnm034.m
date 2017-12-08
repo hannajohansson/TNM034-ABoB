@@ -12,7 +12,7 @@ function [id] = tnm034(im)
     %im = imread('testIm/db1_09_rotation_+5.jpg');
     im = imread('images/db1/db1_09.jpg');
     %im = imread('images/db2/bl_01.jpg');
-    
+   
     %im = im*1.3; %+30%
     im = im*0.7; %-30%
     
