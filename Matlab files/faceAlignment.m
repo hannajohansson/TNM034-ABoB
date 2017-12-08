@@ -225,6 +225,7 @@ end
 %                 plot images, use uint8 to plot images
 %----------------------------------------------------------------
 
+
 figure;
 subplot(2,2,1);
 imshow(faceMask);
