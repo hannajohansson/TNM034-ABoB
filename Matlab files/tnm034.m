@@ -10,14 +10,14 @@ function [id] = tnm034(im)
     % REMOVE LATER
     %im = imread('testIm/db1_09_combination.jpg');
     %im = imread('testIm/db1_09_rotation_+5.jpg');
-    %im = imread('images/db1/db1_09.jpg');
+    im = imread('images/db1/db1_13.jpg');
     %im = imread('images/db2/bl_01.jpg');
-    im = imread('testIm/untitled.jpg');
+    %im = imread('testIm/untitled.jpg');
     
     close all;
    
-    %im = im*1.3; %+30%
-    im = im*0.7; %-30%
+    im = im*1.3; %+30%
+    %im = im*0.7; %-30%
     
     figure, imshow(im);
 
