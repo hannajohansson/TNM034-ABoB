@@ -8,7 +8,7 @@ function [id] = tnm034(im)
     close all;
 
     % REMOVE LATER
-    im = imread('testIm/db1_09_combination.jpg');
+    im = imread('testIm/db1_13_translation.jpg');
 
     % Run the face detection for the image im to be compared with the db
     disp('--- Processing the input image.. ---');

@@ -3,11 +3,12 @@ function createEigenfacesPCA(db)
     % Step 1: Create variables
     [rows, cols] = size(db); % db or image
     n = 300 * 400; % Facial image dimension
-    M = cols; % Number of traning images in dbNormKings, M << n
+    M = cols; % Number of traning images in db, M << n
     K = cols; % Number of Eigenfaces used, K <= M
     xiSum = 0;
     xiVec = zeros(n,M);
     
+    % Loop over every image in db
     for k = 1:M
         
         % Step 2: Create gray image with only one channel
@@ -28,7 +29,7 @@ function createEigenfacesPCA(db)
     
     for k = 1:M
         
-        % Step 5: Subtract the mean face, my, for each face vector xi
+        % Step 5: Subtract the mean face for each face vector xi
         phiVec(:,k) = xiVec(:,k) - meanFace;
 
     end 
@@ -41,7 +42,7 @@ function createEigenfacesPCA(db)
         
     % Step 7: Compute the M largest eigenvectors ui for the nxn matrix A*A' 
     ui = A * V; % M eigenvectors ui
-    ui = ui/norm(ui); % Skala om
+    ui = ui/norm(ui); % Normalize ui
     save 'ui' ui;
     
     % Step 8: Reshape the eigenvectors into Eigenfaces (matrix)    

@@ -12,17 +12,13 @@ function [faceMask] = faceDetection(editedImage)
     threshold = graythresh(crImage);
     imageMask = im2bw(crImage, threshold);
 
-    % Step 3: Convert crImage into a binary image using a threshold
-    threshold = graythresh(crImage);
-    imageMask = im2bw(crImage, threshold);
-
-    % Step 5: Morphological operations
+    % Step 3: Morphological operations
     morphMask = bwmorph(imageMask, 'open');
 
     se = strel('sphere', 9);
     morphMask = imdilate(morphMask,se);
 
-    % Step 6: Combine original image with the mask
+    % Step 4: Combine original image with the mask
     faceMask = editedImage .* morphMask;
     
 end

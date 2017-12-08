@@ -41,11 +41,6 @@ function processDB()
         cropedImage = cropImage(leftEyeCoords, rightEyeCoords, editedImage);
         cropedImages{k} = cropedImage;
         
-        % FIX THIS?
-        % Scale +-10%
-        % Rotation +-5 degrees
-        % Tone value +-30%
-        
     end
     disp('--- Database completly processed. ---');
 

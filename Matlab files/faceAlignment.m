@@ -10,10 +10,10 @@ image = editedImage;
 faceMaskBin = im2bw(faceMask, 0.01);    
 
 % Dilate and erode using strel(radius, number of segments) 
-ErFace = strel('disk', 20, 8); 
-ErFace2 = strel('disk', 20, 8);
-DilFace = strel('disk', 10, 8);
-faceMask = imerode(imerode(imdilate(faceMaskBin, DilFace), ErFace), ErFace2);
+erFace = strel('disk', 20, 8); 
+erFace2 = strel('disk', 20, 8);
+dilFace = strel('disk', 10, 8);
+faceMask = imerode(imerode(imdilate(faceMaskBin, dilFace), erFace), erFace2);
 
 % Use the faceMask to make non-face-points gray
 [height, width, dim] = size(image);
@@ -70,12 +70,14 @@ else
     %two mouths found (bwareafilt in mouthMap.m gives max two mouths)
     %-> find the best 
     
-    %check distance to center, pick the most centered mouth
+    %mouths close to each other, pick the most centered mouth
     if (abs(mCentroids(1,2) - mCentroids(2,2)) < (height *0.015))  
-        %mouths to close 
+
+        %check distance to center
         firstDist = width*0.5 - mCentroids(1,1);
         secondDist = width*0.5 - mCentroids(2,1);
      
+        %save the most centered mouth
         if firstDist > secondDist 
            mouthCoords(1,1) = mCentroids(2,1);
            mouthCoords(1,2) = mCentroids(2,2);
@@ -83,7 +85,10 @@ else
            mouthCoords(1,1) = mCentroids(1,1);
            mouthCoords(1,2) = mCentroids(1,2);
         end 
+    
+    %if mouths far away from each other
     else
+        %save the mouth with a lower position in the image
         if mCentroids(1,2) > mCentroids(2,2) 
             mouthCoords(1,:) = mCentroids(1,:);
         else 
@@ -103,8 +108,9 @@ else
 end
 
 %check how many eyes found
-%no eyes found -> create two defalut eyes and store them in index
+%no eyes found -> create two default eyes and store them in index
 if(numEyes == 0)
+    
     %if no mouth is found
     if(numMouth == 0) 
         %left eye
@@ -124,11 +130,11 @@ if(numEyes == 0)
         %right eye
         index(2,1) = mouthCoords(1,1)*1.2;
         index(2,2) = mouthCoords(1,2)*0.4;
-    end    
+    end   
     
+%one eye is found -> mirror the coordinates of that eye    
 elseif(numEyes == 1)
-    %one eye is found -> mirror the coordinates of that eye
-    
+        
     % right eye found
     if  (eCentroids(1,1) > mouthCoords(1,1)) 
         index(2,1) = mouthCoords(1,1) - (mouthCoords(1,1) - eCentroids(1,1));
@@ -142,11 +148,12 @@ elseif(numEyes == 1)
     
     %save the first eyes in index
     index(1,:) = eCentroids(1,:);
-    
   
+    
+%two eyes are found (bwareafilt in eyeMap.m gives max two eyes)
+% -> check if these are ok  
 else
-    %two eyes are found ( bwareafilt in eyeMap.m gives max two eyes)
-    % -> check if these are okej
+    
     a = 1;
 
     %loop over all eyes found
@@ -159,10 +166,11 @@ else
         end
     end 
     
-    %Check how many okey eyes
-    if(a == 1) %all eyes where below mouth, not okej
+    %Check how many ok eyes 
+    if(a == 1) %all eyes where below mouth, not ok
         %create two default eyes and store them in index
-       %if no mouth is found
+        
+        %if no mouth is found
         if(numMouth == 0) 
             %left eye
             index(1,1) = width*0.45;
@@ -210,22 +218,9 @@ else
 end
 
 %----------------------------------------------------------------
-%                 save coordinates of eyes
-%----------------------------------------------------------------
-%check position to get right and left eye
-if index(1,1) < index(2,1)
-    leftEyeCoords(1,:) = index(1,:);
-    rightEyeCoords(1,:) = index(2,:);
-else
-    leftEyeCoords(1,:) = index(2,:);
-    rightEyeCoords(1,:) = index(1,:);
-end
-
-%----------------------------------------------------------------
 %                 plot images, use uint8 to plot images
 %----------------------------------------------------------------
-
-
+%{
 figure;
 subplot(2,2,1);
 imshow(faceMask);
@@ -242,7 +237,7 @@ imshow(finalEyeMap)
 hold on
 plot(index(:,1),index(:,2), 'b*')
 hold off
-
+%}
 
 %----------------------------------------------------------------
 %                 plot triangle for eyes and mouth
@@ -261,6 +256,5 @@ line([leftEyeCoords(1),mouthCoords(1)],[leftEyeCoords(2),mouthCoords(2)],'LineWi
 line([rightEyeCoords(1),mouthCoords(1)],[rightEyeCoords(2), mouthCoords(2)],'LineWidth',2, 'color','r')
 hold off
 %}
-
 
 end

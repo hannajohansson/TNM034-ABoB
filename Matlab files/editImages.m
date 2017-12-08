@@ -2,28 +2,28 @@ function [editedImage] = editImages(image)
 
     originalImage = im2double(image);
 
-    % Step 2: Convert to gray so we can get the mean luminance.
+    % Step 1: Convert to gray so we can get the mean luminance.
     grayImage = rgb2gray(originalImage);
     J = imadjust(grayImage); 
     %J = imadjust(grayImage,[],[]);
 
-    % Step 3: Extract the individual red, green, and blue color channels.
+    % Step 2: Extract the individual red, green, and blue color channels.
     redChannel = originalImage(:, :, 1);
     greenChannel = originalImage(:, :, 2);
     blueChannel = originalImage(:, :, 3);
 
-    % Step 4: Mean 
+    % Step 3: Mean 
     meanRed = mean2(redChannel);
     meanGreen = mean2(greenChannel);
     meanBlue = mean2(blueChannel); 
     meanGray = mean2(J);
 
-    % Step 5: Make all channels have the same mean
+    % Step 4: Make all channels have the same mean
     redChannel = (redChannel * meanGray / meanRed);
     greenChannel = (greenChannel * meanGray / meanGreen);
     blueChannel = (blueChannel * meanGray / meanBlue);
 
-    % Step 6: Recombine separate color channels into a single, true color RGB image.
+    % Step 5: Recombine separate color channels into a single, true color RGB image.
     editedImage = cat(3, redChannel, greenChannel, blueChannel);
     editedImage = min(editedImage, 1);
     

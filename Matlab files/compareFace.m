@@ -30,12 +30,12 @@ function [result] = compareFace(image)
     for k = 1:M
         ei(k) = norm(weightQuery - weights(:,k));
     end
-    ei
+    
     % Step 6: Find the smallest ei
     eiMin = min(ei);
     
     % Step 7: Define a threshold for acceptable distance
-    threshold = 16.5; % <-- example
+    threshold = 16.5; 
     
     % Step 8: Check if image is in database
     if eiMin <= threshold
