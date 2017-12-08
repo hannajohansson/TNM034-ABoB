@@ -248,8 +248,8 @@ hold off
 %                 plot triangle for eyes and mouth
 %----------------------------------------------------------------
 
-
-figure, subplot(2,2,2);
+%{
+figure%, subplot(2,2,2);
 imshow(image)
 hold on
 
