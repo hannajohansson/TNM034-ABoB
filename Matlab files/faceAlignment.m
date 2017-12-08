@@ -212,6 +212,7 @@ hold off
 %                 plot triangle for eyes and mouth
 %----------------------------------------------------------------
 
+
 figure, subplot(2,2,2);
 imshow(image)
 hold on
@@ -224,5 +225,6 @@ line([leftEyeCoords(1),mouthCoords(1)],[leftEyeCoords(2),mouthCoords(2)],'LineWi
 line([rightEyeCoords(1),mouthCoords(1)],[rightEyeCoords(2), mouthCoords(2)],'LineWidth',2, 'color','r')
 hold off
 %}
+
 
 end

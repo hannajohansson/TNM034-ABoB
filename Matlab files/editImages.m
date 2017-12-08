@@ -27,7 +27,9 @@ function [editedImage] = editImages(image)
     editedImage = min(editedImage, 1);
     
     % PLOTS
+    %{
     figure, subplot(1,2,1), imshow(originalImage);
     subplot(1,2,2), imshow(editedImage);
+    %}
 
 end

@@ -8,7 +8,7 @@ function [id] = tnm034(im)
     % REMOVE LATER
     %im = imread('testIm/db1_09_rotation_+5.jpg');
     %im = imread('images/db0/db0_3.jpg');
-    im = imread('images/db2/bl_01.jpg');
+    im = imread('images/db2/il_01.jpg');
     close all;
 
     % Run the face detection for the image im to be compared with the db
