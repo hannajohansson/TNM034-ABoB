@@ -6,13 +6,15 @@ function [id] = tnm034(im)
     % RUN "processDB" ONE TIME BEFORE THIS FUNCTION
 
     % REMOVE LATER
-    im = imread('testIm/db1_09_combination.jpg');
+    %im = imread('testIm/db1_09_combination.jpg');
     %im = imread('testIm/db1_09_rotation_+5.jpg');
-    %im = imread('images/db0/db0_3.jpg');
+    %im = imread('images/db1/db1_09.jpg');
     %im = imread('images/db2/bl_01.jpg');
+    im = imread('testIm/untitled.jpg');
     
-    % im = im*1.3; %+30%
-    % im = im*0.7; %-30%
+    %im = im*1.3; %+30%
+    %im = im*0.7; %-30%
+    %im = max(im,1);
     
     close all;
 
