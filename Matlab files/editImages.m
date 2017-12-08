@@ -4,7 +4,8 @@ function [editedImage] = editImages(image)
 
     % Step 2: Convert to gray so we can get the mean luminance.
     grayImage = rgb2gray(originalImage);
-    J = imadjust(grayImage);
+    J = imadjust(grayImage); 
+    %J = imadjust(grayImage,[],[]);
 
     % Step 3: Extract the individual red, green, and blue color channels.
     redChannel = originalImage(:, :, 1);
@@ -27,7 +28,9 @@ function [editedImage] = editImages(image)
     editedImage = min(editedImage, 1);
     
     % PLOTS
-    figure, subplot(1,2,1), imshow(originalImage);
-    subplot(1,2,2), imshow(editedImage);
-
+    %{
+    figure, subplot(1,4,1), imshow(originalImage);
+    subplot(1,4,2), imshow(J);
+    subplot(1,4,4), imshow(editedImage);
+    %}
 end

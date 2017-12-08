@@ -103,20 +103,38 @@ else
 end
 
 %check how many eyes found
+%no eyes found -> create two defalut eyes and store them in index
 if(numEyes == 0)
-    %no eyes found -> create two defalut eyes and store them in index
-    index(1,1) = width*0.45;
-    index(1,2) = height * 0.6;
+    %if no mouth is found
+    if(numMouth == 0) 
+        %left eye
+        index(1,1) = width*0.45;
+        index(1,2) = height * 0.6;
 
-    index(2,1) = width*0.55;
-    index(2,2) = height * 0.6;
+        %right eye
+        index(2,1) = width*0.55;
+        index(2,2) = height * 0.6;
+        
+    %if mouth is found
+    else
+        %left eye
+        index(1,1) = mouthCoords(1,1)*0.8;
+        index(1,2) = mouthCoords(1,2)*0.4;
+
+        %right eye
+        index(2,1) = mouthCoords(1,1)*1.2;
+        index(2,2) = mouthCoords(1,2)*0.4;
+    end    
     
 elseif(numEyes == 1)
     %one eye is found -> mirror the coordinates of that eye
-    if  (eCentroids(1,1) > width*0.5) % right eye found
-        index(2,1) = width*0.5 - (width*0.5 - eCentroids(1,1));
-    else % left eye found
-        index(2,1) = width*0.5 + (width*0.5 - eCentroids(1,1));
+    
+    % right eye found
+    if  (eCentroids(1,1) > mouthCoords(1,1)) 
+        index(2,1) = mouthCoords(1,1) - (mouthCoords(1,1) - eCentroids(1,1));
+    % left eye found
+    else 
+        index(2,1) = mouthCoords(1,1) + (mouthCoords(1,1) - eCentroids(1,1));
     end
     
     %use same y coordinate for both eyes
@@ -128,13 +146,13 @@ elseif(numEyes == 1)
   
 else
     %two eyes are found ( bwareafilt in eyeMap.m gives max two eyes)
-    % -> check if thees are okej
+    % -> check if these are okej
     a = 1;
 
     %loop over all eyes found
     for i = 1:numEyes
         %check if eyes are above the mouth in the image (Y position)
-        if (eCentroids(i,2) < mouthCoords(1,2)*0.7)
+        if (eCentroids(i,2) < mouthCoords(1,2)*0.8)
             index(a,1) = eCentroids(i,1);
             index(a,2) = eCentroids(i,2);
             a = a + 1;
@@ -143,19 +161,36 @@ else
     
     %Check how many okey eyes
     if(a == 1) %all eyes where below mouth, not okej
-        %create two defalut eyes and store them in index
-        index(1,1) = width*0.45;
-        index(1,2) = height * 0.6;
+        %create two default eyes and store them in index
+       %if no mouth is found
+        if(numMouth == 0) 
+            %left eye
+            index(1,1) = width*0.45;
+            index(1,2) = height * 0.6;
 
-        index(2,1) = width*0.55;
-        index(2,2) = height * 0.6;
+            %right eye
+            index(2,1) = width*0.55;
+            index(2,2) = height * 0.6;
+
+        %if mouth is found
+        else
+            %left eye
+            index(1,1) = mouthCoords(1,1)*0.8;
+            index(1,2) = mouthCoords(1,2)*0.4;
+
+            %right eye
+            index(2,1) = mouthCoords(1,1)*1.2;
+            index(2,2) = mouthCoords(1,2)*0.4;
+        end 
         
     elseif(a == 2)  
         %one eye is found -> mirror the coordinates of that eye
-        if  (index(1,1) > width*0.5) % right eye found
-            index(2,1) = width*0.5 - (width*0.5 - index(1,1));
-        else % left eye found
-            index(2,1) = width*0.5 + (width*0.5 - index(1,1));
+        % right eye found
+        if  (eCentroids(1,1) > mouthCoords(1,1)) 
+            index(2,1) = mouthCoords(1,1) - (mouthCoords(1,1) - eCentroids(1,1));
+        % left eye found
+        else 
+            index(2,1) = mouthCoords(1,1) + (mouthCoords(1,1) - eCentroids(1,1));
         end
         
         %use same y coordinate for both eyes
@@ -189,7 +224,7 @@ end
 %----------------------------------------------------------------
 %                 plot images, use uint8 to plot images
 %----------------------------------------------------------------
-%{
+
 figure;
 subplot(2,2,1);
 imshow(faceMask);
@@ -206,13 +241,14 @@ imshow(finalEyeMap)
 hold on
 plot(index(:,1),index(:,2), 'b*')
 hold off
-%}
+
 
 %----------------------------------------------------------------
 %                 plot triangle for eyes and mouth
 %----------------------------------------------------------------
 
-figure, subplot(2,2,2);
+%{
+figure%, subplot(2,2,2);
 imshow(image)
 hold on
 
@@ -224,5 +260,6 @@ line([leftEyeCoords(1),mouthCoords(1)],[leftEyeCoords(2),mouthCoords(2)],'LineWi
 line([rightEyeCoords(1),mouthCoords(1)],[rightEyeCoords(2), mouthCoords(2)],'LineWidth',2, 'color','r')
 hold off
 %}
+
 
 end

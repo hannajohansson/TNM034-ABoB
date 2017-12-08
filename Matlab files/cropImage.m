@@ -33,6 +33,7 @@ function [cropedImage] = cropImage(leftEyeCoords, rightEyeCoords, editedImage)
     end
 
     %% PLOTS
+    %{
     figure, subplot(1,3,1), imshow(rotatedImage);
     axis on
     
@@ -41,5 +42,6 @@ function [cropedImage] = cropImage(leftEyeCoords, rightEyeCoords, editedImage)
     
     subplot(1,3,3), imshow(cropedImage);
     axis on
+    %}
     
 end
