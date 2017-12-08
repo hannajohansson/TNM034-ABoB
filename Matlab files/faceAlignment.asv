@@ -51,6 +51,9 @@ mCentroids = cat(1, mouthStats.Centroid);
 [eyeMapLabel, numEyes] = bwlabel(finalEyeMap);
 eyeStats = regionprops(eyeMapLabel, 'Centroid');
 eCentroids = cat(1, eyeStats.Centroid);
+eCentroids(1,2)
+eCentroids(2,2)
+
 
 %----------------------------------------------------------------
 %             find the best mouth position
@@ -102,6 +105,8 @@ else
     index = zeros(numEyes,2);
 end
 
+numEyes
+
 %check how many eyes found
 %no eyes found -> create two defalut eyes and store them in index
 if(numEyes == 0)
@@ -118,23 +123,23 @@ if(numEyes == 0)
     %if mouth is found
     else
         %left eye
-        index(1,1) = mouthCoords(1,1)*0.8;
-        index(1,2) = mouthCoords(1,2)*0.4;
+        index(1,1) = mouthCoords(1)*0.8;
+        index(1,2) = mouthCoords(2)*0.4;
 
         %right eye
-        index(2,1) = mouthCoords(1,1)*1.2;
-        index(2,2) = mouthCoords(1,2)*0.4;
+        index(2,1) = mouthCoords(1)*1.2;
+        index(2,2) = mouthCoords(2)*0.4;
     end    
     
 elseif(numEyes == 1)
     %one eye is found -> mirror the coordinates of that eye
     
     % right eye found
-    if  (eCentroids(1,1) > mouthCoords(1,1)) 
-        index(2,1) = mouthCoords(1,1) - (mouthCoords(1,1) - eCentroids(1,1));
+    if  (eCentroids(1,1) > mouthCoords(1)) 
+        index(2,1) = mouthCoords(1) - (mouthCoords(1) - eCentroids(1,1));
     % left eye found
     else 
-        index(2,1) = mouthCoords(1,1) + (mouthCoords(1,1) - eCentroids(1,1));
+        index(2,1) = mouthCoords(1) + (mouthCoords(1) - eCentroids(1,1));
     end
     
     %use same y coordinate for both eyes
@@ -152,7 +157,7 @@ else
     %loop over all eyes found
     for i = 1:numEyes
         %check if eyes are above the mouth in the image (Y position)
-        if (eCentroids(i,2) < mouthCoords(1,2)*0.8)
+        if (eCentroids(i,2) < mouthCoords(1,2)*0.7)
             index(a,1) = eCentroids(i,1);
             index(a,2) = eCentroids(i,2);
             a = a + 1;
@@ -175,22 +180,22 @@ else
         %if mouth is found
         else
             %left eye
-            index(1,1) = mouthCoords(1,1)*0.8;
-            index(1,2) = mouthCoords(1,2)*0.4;
+            index(1,1) = mouthCoords(1)*0.8;
+            index(1,2) = mouthCoords(2)*0.4;
 
             %right eye
-            index(2,1) = mouthCoords(1,1)*1.2;
-            index(2,2) = mouthCoords(1,2)*0.4;
+            index(2,1) = mouthCoords(1)*1.2;
+            index(2,2) = mouthCoords(2)*0.4;
         end 
         
     elseif(a == 2)  
         %one eye is found -> mirror the coordinates of that eye
         % right eye found
-        if  (eCentroids(1,1) > mouthCoords(1,1)) 
-            index(2,1) = mouthCoords(1,1) - (mouthCoords(1,1) - eCentroids(1,1));
+        if  (eCentroids(1,1) > mouthCoords(1)) 
+            index(2,1) = mouthCoords(1) - (mouthCoords(1) - eCentroids(1,1));
         % left eye found
         else 
-            index(2,1) = mouthCoords(1,1) + (mouthCoords(1,1) - eCentroids(1,1));
+            index(2,1) = mouthCoords(1) + (mouthCoords(1) - eCentroids(1,1));
         end
         
         %use same y coordinate for both eyes
