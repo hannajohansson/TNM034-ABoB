@@ -33,10 +33,10 @@ eyeMapC = normalizeMatrix(eyeMapC,0,255);
 imgGray = histeq(rgb2gray(image)); 
 
 % Create components for equation
-DilL = strel('disk', 3, 8); % radius = 15, n(number of segments) = 8
-ErL = strel('disk', 10, 8); % radius = 15, n(number of segments) = 8
-numerator =  imdilate(imgGray, DilL); % T?ljare
-denumerator = 1 + imerode(imgGray, ErL); % N?mnare
+dilL = strel('disk', 3, 8); % radius = 15, n(number of segments) = 8
+erL = strel('disk', 10, 8); % radius = 15, n(number of segments) = 8
+numerator =  imdilate(imgGray, dilL); % T?ljare
+denumerator = 1 + imerode(imgGray, erL); % N?mnare
 
 % Create eyeMapL and normalize
 eyeMapL = numerator ./ denumerator;
@@ -54,9 +54,9 @@ imgMult = (eyeMapC .* eyeMapL);
 imgMult = normalizeMatrix(imgMult,0,1);
 
 % Dilate and erode imgMult
-DilMult = strel('disk', 5, 8);
-ErMult = strel('disk', 2, 8);
-imgMult =  imerode(imdilate(imgMult, DilMult), ErMult);
+dilMult = strel('disk', 5, 8);
+erMult = strel('disk', 2, 8);
+imgMult =  imerode(imdilate(imgMult, dilMult), erMult);
 
 % Make imgMultDil binary
 level = (1- (graythresh(imgMult) + graythresh(y))/2);

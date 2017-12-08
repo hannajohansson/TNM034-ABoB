@@ -18,8 +18,6 @@ function [id] = tnm034(im)
    
     im = im*1.3; %+30%
     %im = im*0.7; %-30%
-    
-    figure, imshow(im);
 
     % Run the face detection for the image im to be compared with the db
     disp('--- Processing the input image.. ---');
